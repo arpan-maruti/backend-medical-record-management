@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import process from 'process';
 import UserRoutes from './routes/userRoutes.js'
 import LoiTypeRoutes from './routes/loiTypeRoutes.js'
+import InstructionTypeRoutes from './routes/instructionTypeRoutes.js';
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,7 +27,7 @@ mongoose.connect(dbUrl)
 
 app.use('/user', UserRoutes);
 app.use('/loiType', LoiTypeRoutes);
-
+app.use('/instructionType', InstructionTypeRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

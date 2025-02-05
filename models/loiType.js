@@ -12,7 +12,7 @@ const loiTypeSchema = new mongoose.Schema({
   },
   modified_by: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: User,
     required: true,
   },
   created_on: {

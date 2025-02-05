@@ -5,27 +5,65 @@ const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
+    maxlength: 15,
   },
   lastName: {
     type: String,
     required: true,
+    maxlength: 15,
   },
   email: {
     type: String,
     required: true,
-    unique: true,  // Enforces email uniqueness
+    unique: true,
+    match: [/\S+@\S+\.\S+/, 'Please use a valid email address'],
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  countryCode: {
+    type: String,
+    required: true,
+    maxlength: 7,
   },
   phoneNumber: {
     type: String,
     required: true,
+    unique: true,
   },
-  createdAt: {
+  userRole: {
+    type: String,
+    enum: ['user', 'admin'],
+    required: true,
+    default: 'user',
+  },
+  isActive: {
+    type: Boolean,
+    default: false,
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+    required: false,
+  },
+  modifiedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+    required: false,
+  },
+  createdOn: {
+    type: Date,
+    default: Date.now,
+  },
+  modifiedOn: {
     type: Date,
     default: Date.now,
   },
 });
 
-// Create the model
 const User = mongoose.model('User', userSchema);
 
 export default User;

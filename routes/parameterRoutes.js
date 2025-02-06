@@ -10,20 +10,57 @@ router.post("/", async (req, res) => {
   const { instruction_id, parameter_msg, significance_level, created_by, modified_by } = req.body;
 
   try {
-    // Validate if InstructionType exists
+    if (!instruction_id) {
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "instruction_id is required."
+      });
+    }
+  
+    if (!parameter_msg) {
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "parameter_msg is required."
+      });
+    }
+  
+    if (!significance_level) {
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "significance_level is required."
+      });
+    }
+  
+    if (!created_by) {
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "created_by is required."
+      });
+    }
+  
+    if (!modified_by) {
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "modified_by is required."
+      });
+    }
     const instruction = await InstructionType.findById(instruction_id);
     if (!instruction) {
-      return res.status(400).json({ error: "Invalid instruction_id. Instruction Type not found." });
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "Invalid instruction_id. Instruction Type not found."
+      });
     }
 
-    // Validate if Users exist
     const createdByUser = await User.findById(created_by);
     const modifiedByUser = await User.findById(modified_by);
     if (!createdByUser || !modifiedByUser) {
-      return res.status(400).json({ error: "Invalid user IDs for created_by or modified_by." });
+      return res.status(400).json({
+        code: "Bad Request",
+        message: "Invalid user IDs for created_by or modified_by."
+      });
     }
 
-    // Create new Parameter
     const newParameter = new Parameter({
       instruction_id,
       parameter_msg,
@@ -36,29 +73,47 @@ router.post("/", async (req, res) => {
     });
 
     await newParameter.save();
-    res.status(201).json(newParameter);
+    res.status(201).json({
+      code: "Created",
+      message: "Parameter created successfully.",
+      data: newParameter,
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({
+      code: "Internal Server Error",
+      message: "An error occurred while creating the parameter.",
+      error: err.message,
+    });
   }
 });
 
-// Get all parameters for a specific instruction_id
+
 router.get("/instruction/:instruction_id", async (req, res) => {
   const { instruction_id } = req.params;
-
   try {
     // Validate if InstructionType exists
     const instruction = await InstructionType.findById(instruction_id);
     if (!instruction) {
       return res.status(404).json({ error: "Instruction Type not found." });
     }
-
-    const parameters = await Parameter.find({ instruction_id, is_deleted: false })
-      .populate("created_by modified_by", "firstName lastName email");
-
-    res.status(200).json(parameters);
+    const parameters = await Parameter.find({ instruction_id, is_deleted: false });
+    if (parameters.length === 0) {
+      return res.status(404).json({
+        code: "Not Found",
+        message: "No parameters found for this instruction."
+      });
+    }
+    res.status(200).json({
+      code: "Success",
+      message: "Parameters retrieved successfully.",
+      data: parameters
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({
+      code: "Internal Server Error",
+      message: "An error occurred while retrieving parameters.",
+      error: err.message
+    });
   }
 });
 

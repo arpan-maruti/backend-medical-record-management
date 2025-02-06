@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     maxlength: 7,
+
   },
   phoneNumber: {
     type: String,
@@ -54,11 +55,11 @@ const userSchema = new mongoose.Schema({
     default: null,
     required: false,
   },
-  createdOn: {
+  created_on: {
     type: Date,
     default: Date.now,
   },
-  modifiedOn: {
+  modified_on: {
     type: Date,
     default: Date.now,
   },

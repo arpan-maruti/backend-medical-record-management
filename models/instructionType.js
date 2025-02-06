@@ -32,7 +32,6 @@ const instructionTypeSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true } // This will automatically handle created_on and modified_on
 );
 
 const InstructionType = mongoose.model("InstructionType", instructionTypeSchema);

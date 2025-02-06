@@ -1,7 +1,7 @@
 import express from "express";
-import InstructionType from "./models/InstructionType.js"; // Import the model
-import LoiType from "./models/loiType.js"; // Import LoiType for reference validation
-import User from "./models/user.js"; // Import User for reference validation
+import InstructionType from "../models/instructionType.js";
+import LoiType from "../models/loiType.js";
+import User from "../models/user.js";
 
 const router = express.Router();
 
@@ -37,4 +37,4 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-export default InstructionTypeRoutes;
+export default router;

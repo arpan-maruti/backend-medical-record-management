@@ -7,7 +7,7 @@ router.post('/users', async (req, res) => {
     firstName,
     lastName,
     email,
-    password,
+    password = null,
     countryCode,
     phoneNumber,
     userRole = 'user', // Default to 'user' role if not provided

@@ -7,7 +7,8 @@ import process from 'process';
 import UserRoutes from './routes/userRoutes.js'
 import LoiTypeRoutes from './routes/loiTypeRoutes.js'
 import InstructionTypeRoutes from './routes/instructionTypeRoutes.js';
-import ParameterRoutes from './routes/parameterRoutes.js'
+import ParameterRoutes from './routes/parameterRoutes.js';
+import CaseRoutes from './routes/caseRoutes.js';
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -30,7 +31,7 @@ app.use('/user', UserRoutes);
 app.use('/loiType', LoiTypeRoutes);
 app.use("/instruction-types", InstructionTypeRoutes);
 app.use("/parameters", ParameterRoutes);
-
+app.use('/case', CaseRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

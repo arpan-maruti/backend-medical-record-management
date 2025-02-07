@@ -32,15 +32,10 @@ const parameterSchema = new mongoose.Schema(
       ref: User, // Reference to User
       required: true,
     },
-    created_on: {
-      type: Date,
-      default: Date.now,
-    },
-    modified_on: {
-      type: Date,
-      default: Date.now,
-    },
   },
+  {
+    timestamps: true
+  }
 );
 
 const Parameter = mongoose.model("Parameter", parameterSchema);

@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
     countryCode,
     phoneNumber,
     userRole = "user", // Default to 'user' role if not provided
-    isActive = false, // Default to false if not provided
+    isDeleted = false, // Default to false if not provided
     createdBy = null, // Default to null if not provided
     modifiedBy = null, // Default to null if not provided
   } = req.body;
@@ -73,7 +73,7 @@ router.post("/register", async (req, res) => {
       countryCode,
       phoneNumber,
       userRole,
-      isActive,
+      isDeleted,
       createdBy,
       modifiedBy,
       createdOn: new Date(),
@@ -111,7 +111,10 @@ router.get("/:id", async(req,res)=> {
   try {
     const user = await User.findById(id);
     if(!user) {
-      return res.status(404).json({error: "User not found."});
+      return res.status(404).json({
+        code: "Not Found",
+        error: "User not found."
+      });
     }
     res.status(200).json({
       code: "Success",
@@ -137,7 +140,7 @@ router.patch("/:id", async(req,res) => {
     countryCode,
     phoneNumber,
     userRole,
-    isActive,
+    isDeleted,
     modifiedBy,
   } = req.body;
 
@@ -157,7 +160,7 @@ router.patch("/:id", async(req,res) => {
     user.countryCode = countryCode || user.countryCode;
     user.phoneNumber = phoneNumber || user.phoneNumber;
     user.userRole = userRole || user.userRole;
-    user.isActive = isActive ?? user.isActive; // Using nullish coalescing (to not overwrite undefined)
+    user.isDeleted = isDeleted || user.isDeleted; // Using nullish coalescing (to not overwrite undefined)
     user.modifiedBy = modifiedBy || user.modifiedBy;
     user.modifiedOn = new Date(); // Update modification date
 
@@ -177,4 +180,14 @@ router.patch("/:id", async(req,res) => {
     });
   }
 });
+
+router.get("cases/:id", async (req, res) => {
+  const {id} = req.params;
+  try {
+    
+  } catch {
+
+  }
+});
+
 export default router;

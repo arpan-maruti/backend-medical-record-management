@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     default: 'user',
   },
-  isActive: {
+  isDeleted: {
     type: Boolean,
     default: false,
   },
@@ -56,18 +56,10 @@ const userSchema = new mongoose.Schema({
     ref: 'User',
     default: null,
     required: false,
-  },
-  createdOn: {
-    type: Date,
-    default: Date.now,
-  },
-  modifiedOn: {
-    type: Date,
-    default: Date.now,
-  },
+  }
+}, {
+  timestamps: true
 });
-
-
 
 const User = mongoose.model('User', userSchema);
 

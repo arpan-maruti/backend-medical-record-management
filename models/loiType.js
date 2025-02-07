@@ -14,15 +14,10 @@ const loiTypeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: User,
     required: true,
-  },
-  created_on: {
-    type: Date,
-    default: Date.now,
-  },
-  modified_on: {
-    type: Date,
-    default: Date.now,
-  },
+  }
+}, 
+{
+  timestamps: true
 });
 
 const LoiType = mongoose.model("LoiType", loiTypeSchema);

@@ -55,8 +55,8 @@ router.post("/", async (req, res) => {
       loi_id,
       created_by,
       modified_by,
-      created_on: new Date(),
-      modified_on: new Date(),
+      createdOn: new Date(),
+      modifiedOn: new Date(),
     });
 
     await newInstruction.save();

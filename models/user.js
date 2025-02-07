@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    match: [/^[0-9\-\+\(\)\s]*$/, 'Please use a valid phone number']
   },
   userRole: {
     type: String,
@@ -56,11 +57,11 @@ const userSchema = new mongoose.Schema({
     default: null,
     required: false,
   },
-  created_on: {
+  createdOn: {
     type: Date,
     default: Date.now,
   },
-  modified_on: {
+  modifiedOn: {
     type: Date,
     default: Date.now,
   },

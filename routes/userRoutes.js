@@ -105,4 +105,76 @@ router.post("/register", async (req, res) => {
   }
 });
 
+
+router.get("/:id", async(req,res)=> {
+  const {id} = req.params;
+  try {
+    const user = await User.findById(id);
+    if(!user) {
+      return res.status(404).json({error: "User not found."});
+    }
+    res.status(200).json({
+      code: "Success",
+      message: "User retrieved successfully.",
+      data: user
+    });
+  } catch {
+    res.status(500).json({
+      code: "Internal Server Error",
+      message: "An error occurred while retrieving user.",
+      error: err.message
+    })
+  }
+});
+
+router.patch("/:id", async(req,res) => {
+  const {id} = req.params;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    countryCode,
+    phoneNumber,
+    userRole,
+    isActive,
+    modifiedBy,
+  } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    // If user is not found
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Update user fields with provided data
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.password = password || user.password;
+    user.countryCode = countryCode || user.countryCode;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.userRole = userRole || user.userRole;
+    user.isActive = isActive ?? user.isActive; // Using nullish coalescing (to not overwrite undefined)
+    user.modifiedBy = modifiedBy || user.modifiedBy;
+    user.modifiedOn = new Date(); // Update modification date
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({
+      code: "Success",
+      message: "User updated successfully.",
+      data: user,
+    });
+  } catch (err) {
+    res.status(500).json({
+      code: "Internal Server Error",
+      message: "An error occurred while updating the user.",
+      error: err.message,
+    });
+  }
+});
 export default router;

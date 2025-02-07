@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Create a new Parameter
 router.post("/", async (req, res) => {
-  const { instruction_id, parameter_msg, significance_level, created_by, modified_by } = req.body;
+  const { instruction_id, parameterMsg, significance_level, createdBy, modifiedBy } = req.body;
 
   try {
     if (!instruction_id) {
@@ -17,10 +17,10 @@ router.post("/", async (req, res) => {
       });
     }
   
-    if (!parameter_msg) {
+    if (!parameterMsg) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "parameter_msg is required."
+        message: "parameterMsg is required."
       });
     }
   
@@ -31,17 +31,17 @@ router.post("/", async (req, res) => {
       });
     }
   
-    if (!created_by) {
+    if (!createdBy) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "created_by is required."
+        message: "createdBy is required."
       });
     }
   
-    if (!modified_by) {
+    if (!modifiedBy) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "modified_by is required."
+        message: "modifiedBy is required."
       });
     }
     const instruction = await InstructionType.findById(instruction_id);
@@ -52,22 +52,22 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const createdByUser = await User.findById(created_by);
-    const modifiedByUser = await User.findById(modified_by);
+    const createdByUser = await User.findById(createdBy);
+    const modifiedByUser = await User.findById(modifiedBy);
     if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "Invalid user IDs for created_by or modified_by."
+        message: "Invalid user IDs for createdBy or modifiedBy."
       });
     }
 
     const newParameter = new Parameter({
       instruction_id,
-      parameter_msg,
+      parameterMsg,
       significance_level,
       is_deleted: false,
-      created_by,
-      modified_by,
+      createdBy,
+      modifiedBy,
       createdOn: new Date(),
       modifiedOn: new Date(),
     });

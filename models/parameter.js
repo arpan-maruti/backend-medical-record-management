@@ -9,7 +9,7 @@ const parameterSchema = new mongoose.Schema(
       ref: InstructionType, // Reference to InstructionType
       required: true,
     },
-    parameter_msg: {
+    parameterMsg: {
       type: String,
       required: true,
     },
@@ -22,12 +22,12 @@ const parameterSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // Default value is false
     },
-    created_by: {
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User, // Reference to User
       required: true,
     },
-    modified_by: {
+    modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User, // Reference to User
       required: true,

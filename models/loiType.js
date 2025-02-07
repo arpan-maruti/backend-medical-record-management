@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 import User from './user.js';
 const loiTypeSchema = new mongoose.Schema({
-  loi_msg: {
+  loiMsg: {
     type: String,
     required: true,
   },
-  created_by: {
+  createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: User,
     required: true,
   },
-  modified_by: {
+  modifiedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: User,
     required: true,

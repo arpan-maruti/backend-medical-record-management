@@ -6,7 +6,7 @@ import InstructionType from "../models/instructionType.js";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { instruction_msg, loi_id, created_by, modified_by } = req.body;
+  const { instructionMsg, loi_id, createdBy, modifiedBy } = req.body;
 
   try {
     if (!loi_id) {
@@ -15,10 +15,10 @@ router.post("/", async (req, res) => {
         message: "Loi id is required",
       });
     }
-    if (!instruction_msg) {
+    if (!instructionMsg) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "instruction_msg is required",
+        message: "instructionMsg is required",
       });
     }
     const loiType = await LoiType.findById(loi_id);
@@ -28,33 +28,33 @@ router.post("/", async (req, res) => {
         message: "Invalid loi_id. LoiType not found.",
       });
     }
-    if (!created_by) {
+    if (!createdBy) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "created_by is required."
+        message: "createdBy is required."
       });
     }
   
-    if (!modified_by) {
+    if (!modifiedBy) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "modified_by is required."
+        message: "modifiedBy is required."
       });
     }
-    const createdByUser = await User.findById(created_by);
-    const modifiedByUser = await User.findById(modified_by);
+    const createdByUser = await User.findById(createdBy);
+    const modifiedByUser = await User.findById(modifiedBy);
     if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "Invalid user IDs for created_by or modified_by.",
+        message: "Invalid user IDs for createdBy or modifiedBy.",
       });
     }
 
     const newInstruction = new InstructionType({
-      instruction_msg,
+      instructionMsg,
       loi_id,
-      created_by,
-      modified_by,
+      createdBy,
+      modifiedBy,
       createdOn: new Date(),
       modifiedOn: new Date(),
     });

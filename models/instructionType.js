@@ -9,16 +9,16 @@ const instructionTypeSchema = new mongoose.Schema(
       ref: LoiType, // Reference to LoiType
       required: true,
     },
-    instruction_msg: {
+    instructionMsg: {
       type: String,
       required: true,
     },
-    created_by: {
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User, // Reference to User
       required: true,
     },
-    modified_by: {
+    modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User, // Reference to User
       required: true,

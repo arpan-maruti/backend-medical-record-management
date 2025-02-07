@@ -3,37 +3,37 @@ import User from "../models/user.js";
 import LoiType from "../models/loiType.js";
 const router = express.Router();
 router.post("/", async (req, res) => {
-  const { loi_msg, created_by, modified_by } = req.body;
+  const { loiMsg, createdBy, modifiedBy } = req.body;
 
   try {
-    const createdByUser = await User.findById(created_by);
-    const modifiedByUser = await User.findById(modified_by);
+    const createdByUser = await User.findById(createdBy);
+    const modifiedByUser = await User.findById(modifiedBy);
     
-    if (!loi_msg) {
+    if (!loiMsg) {
       return res.status(400).json({
         code: "Bad Request",
         message: "Loi message is required",
       });
     }
 
-    if (!created_by) {
+    if (!createdBy) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "created_by is required."
+        message: "createdBy is required."
       });
     }
   
-    if (!modified_by) {
+    if (!modifiedBy) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "modified_by is required."
+        message: "modifiedBy is required."
       });
     }
     
     const newLoiType = new LoiType({
-      loi_msg,
-      created_by,
-      modified_by,
+      loiMsg,
+      createdBy,
+      modifiedBy,
       createdOn: new Date(),
       modifiedOn: new Date(),
     });

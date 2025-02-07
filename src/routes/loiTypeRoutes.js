@@ -1,6 +1,6 @@
 import express from "express";
-import User from "../models/user.js";
-import LoiType from "../models/loiType.js";
+import User from "../src/models/user.js";
+import LoiType from "../src/models/loiType.js";
 const router = express.Router();
 router.post("/", async (req, res) => {
   const { loi_msg, created_by, modified_by } = req.body;

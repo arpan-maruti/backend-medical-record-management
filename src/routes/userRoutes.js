@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/user.js";
 const router = express.Router();
 
+//GET: Get all the users
 router.get("/", async (req, res) => {
   try {
     const users = await User.find();
@@ -11,6 +12,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// POST: Add a user
 router.post("/register", async (req, res) => {
   const {
     firstName,
@@ -103,7 +105,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
+//GET: Get user by id
 router.get("/:id", async(req,res)=> {
   const {id} = req.params;
   try {
@@ -119,7 +121,7 @@ router.get("/:id", async(req,res)=> {
       message: "User retrieved successfully.",
       data: user
     });
-  } catch {
+  } catch(err) {
     res.status(500).json({
       code: "Internal Server Error",
       message: "An error occurred while retrieving user.",
@@ -128,6 +130,7 @@ router.get("/:id", async(req,res)=> {
   }
 });
 
+//PATCH: Update user by id
 router.patch("/:id", async(req,res) => {
   const {id} = req.params;
   const {
@@ -147,7 +150,7 @@ router.patch("/:id", async(req,res) => {
 
     // If user is not found
     if (!user) {
-      return res.status(404).json({ error: "User not found." });
+      return res.status(404).json({ code: "Not Found",error: "User not found." });
     }
 
     // Update user fields with provided data
@@ -179,13 +182,46 @@ router.patch("/:id", async(req,res) => {
   }
 });
 
-router.get("cases/:id", async (req, res) => {
-  const {id} = req.params;
-  try {
-    
-  } catch {
 
+// PATCH: Soft delete a user by user_id
+// fix: isDeleted not set to true.
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { modifiedBy } = req.body;
+  try {
+    const user = await User.findById(id);
+    if(!user) {
+
+    }
+    
+    // If the user is not found, return a 404 error
+    if (!user) {
+      return res.status(404).json({
+        code: "Not Found",
+        message: "User not found.",
+      });
+    }
+
+    user.isDeleted = true;
+    user.modifiedBy = modifiedBy || user.modifiedBy;
+    user.modifiedAt = new Date();
+
+    await user.save();
+
+    // Return success message if the user is successfully deleted
+    res.status(200).json({
+      code: "Success",
+      message: "User deleted successfully.",
+      data: user,
+    });
+  } catch (err) {
+    res.status(500).json({
+      code: "Internal Server Error",
+      message: "An error occurred while deleting the user.",
+      error: err.message,
+    });
   }
 });
+
 
 export default router;

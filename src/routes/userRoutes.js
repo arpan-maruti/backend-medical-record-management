@@ -76,8 +76,6 @@ router.post("/register", async (req, res) => {
       isDeleted,
       createdBy,
       modifiedBy,
-      createdOn: new Date(),
-      modifiedOn: new Date(),
     });
 
     await newUser.save();
@@ -162,7 +160,7 @@ router.patch("/:id", async(req,res) => {
     user.userRole = userRole || user.userRole;
     user.isDeleted = isDeleted || user.isDeleted; // Using nullish coalescing (to not overwrite undefined)
     user.modifiedBy = modifiedBy || user.modifiedBy;
-    user.modifiedOn = new Date(); // Update modification date
+    user.modifiedAt = new Date(); // Update modification date
 
     // Save the updated user
     await user.save();

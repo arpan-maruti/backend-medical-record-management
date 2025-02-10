@@ -4,7 +4,7 @@ import LoiType from "./loiType.js";
 
 const instructionTypeSchema = new mongoose.Schema(
   {
-    loi_id: {
+    loiId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: LoiType, // Reference to LoiType
       required: true,

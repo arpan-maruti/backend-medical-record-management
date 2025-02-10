@@ -1,15 +1,15 @@
 import express from "express";
-import User from "../src/models/user.js";
-import LoiType from "../src/models/loiType.js";
-import InstructionType from "../src/models/instructionType.js";
+import User from "../models/user.js";
+import LoiType from "../models/loiType.js";
+import InstructionType from "../models/instructionType.js";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { instructionMsg, loi_id, createdBy, modifiedBy } = req.body;
+  const { instructionMsg, loiId, createdBy, modifiedBy } = req.body;
 
   try {
-    if (!loi_id) {
+    if (!loiId) {
       return res.status(400).json({
         code: "Bad Request",
         message: "Loi id is required",
@@ -21,11 +21,11 @@ router.post("/", async (req, res) => {
         message: "instructionMsg is required",
       });
     }
-    const loiType = await LoiType.findById(loi_id);
+    const loiType = await LoiType.findById(loiId);
     if (!loiType) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "Invalid loi_id. LoiType not found.",
+        message: "Invalid loiId. LoiType not found.",
       });
     }
     if (!createdBy) {
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
         message: "createdBy is required."
       });
     }
-  
+    
     if (!modifiedBy) {
       return res.status(400).json({
         code: "Bad Request",
@@ -52,11 +52,9 @@ router.post("/", async (req, res) => {
 
     const newInstruction = new InstructionType({
       instructionMsg,
-      loi_id,
+      loiId,
       createdBy,
-      modifiedBy,
-      createdOn: new Date(),
-      modifiedOn: new Date(),
+      modifiedBy
     });
 
     await newInstruction.save();
@@ -75,18 +73,18 @@ router.post("/", async (req, res) => {
 });
 
 
-// Get instructions for a particular loi_id
-router.get("/loi/:loi_id", async (req, res) => {
-  const { loi_id } = req.params;
+// Get instructions for a particular loiId
+router.get("/loi/:loiId", async (req, res) => {
+  const { loiId } = req.params;
 
   try {
     // Validate if LoiType exists
-    const loiType = await LoiType.findById(loi_id);
+    const loiType = await LoiType.findById(loiId);
     if (!loiType) {
       return res.status(404).json({ code: "Not Found", error: "LoiType not found." });
     }
 
-    const instructions = await InstructionType.find({ loi_id });
+    const instructions = await InstructionType.find({ loiId });
     res.status(200).json({code: "Ok", data:instructions});
   } catch (err) {
     res.status(500).json({

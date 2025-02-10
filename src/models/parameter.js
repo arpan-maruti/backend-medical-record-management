@@ -4,7 +4,7 @@ import InstructionType from "./instructionType.js";
 
 const parameterSchema = new mongoose.Schema(
   {
-    instruction_id: {
+    instructionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: InstructionType, // Reference to InstructionType
       required: true,
@@ -13,12 +13,12 @@ const parameterSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    significance_level: {
+    significanceLevel: {
       type: String,
       enum: ["Low", "Moderate", "High"], // Enum values
       required: true,
     },
-    is_deleted: {
+    isDeleted: {
       type: Boolean,
       default: false, // Default value is false
     },

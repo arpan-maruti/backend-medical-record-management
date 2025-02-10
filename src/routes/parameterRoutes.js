@@ -7,13 +7,13 @@ const router = express.Router();
 
 // Create a new Parameter
 router.post("/", async (req, res) => {
-  const { instruction_id, parameterMsg, significance_level, createdBy, modifiedBy } = req.body;
+  const { instructionId, parameterMsg, significanceLevel, createdBy, modifiedBy } = req.body;
 
   try {
-    if (!instruction_id) {
+    if (!instructionId) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "instruction_id is required."
+        message: "instructionId is required."
       });
     }
   
@@ -24,10 +24,10 @@ router.post("/", async (req, res) => {
       });
     }
   
-    if (!significance_level) {
+    if (!significanceLevel) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "significance_level is required."
+        message: "significanceLevel is required."
       });
     }
   
@@ -44,11 +44,11 @@ router.post("/", async (req, res) => {
         message: "modifiedBy is required."
       });
     }
-    const instruction = await InstructionType.findById(instruction_id);
+    const instruction = await InstructionType.findById(instructionId);
     if (!instruction) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "Invalid instruction_id. Instruction Type not found."
+        message: "Invalid instructionId. Instruction Type not found."
       });
     }
 
@@ -62,10 +62,10 @@ router.post("/", async (req, res) => {
     }
 
     const newParameter = new Parameter({
-      instruction_id,
+      instructionId,
       parameterMsg,
-      significance_level,
-      is_deleted: false,
+      significanceLevel,
+      isDeleted: false,
       createdBy,
       modifiedBy,
       createdOn: new Date(),
@@ -87,15 +87,15 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/instruction/:instruction_id", async (req, res) => {
-  const { instruction_id } = req.params;
+router.get("/instruction/:instructionId", async (req, res) => {
+  const { instructionId } = req.params;
   try {
     // Validate if InstructionType exists
-    const instruction = await InstructionType.findById(instruction_id);
+    const instruction = await InstructionType.findById(instructionId);
     if (!instruction) {
       return res.status(404).json({ error: "Instruction Type not found." });
     }
-    const parameters = await Parameter.find({ instruction_id, is_deleted: false });
+    const parameters = await Parameter.find({ instructionId, isDeleted: false });
     if (parameters.length === 0) {
       return res.status(404).json({
         code: "Not Found",

@@ -15,9 +15,6 @@ app.use(bodyParser.json());
 
 const dbUrl = process.env.MONGO_URI;
 
-
-
-
 // Connect to MongoDB using Mongoose
 mongoose.connect(dbUrl+"medical")
 .then(() => {

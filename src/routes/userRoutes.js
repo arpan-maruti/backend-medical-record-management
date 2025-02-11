@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendPasswordSetupEmail } from "../utils/mailer.js";
 const router = express.Router();
-
+const JWT_SECRET = process.env.JWT_SECRET;
 // Middleware: Automatically load user when a route contains :id
 router.param("id", async (req, res, next, id) => {
   try {
@@ -136,7 +136,6 @@ router.post("/register", async (req, res) => {
 });
 
 //GET: Get user by id
-// verify this
 router.get("/:id", async(req,res)=> {
   res.status(200).json({
     code: "Success",

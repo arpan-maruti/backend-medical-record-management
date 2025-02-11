@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import User from "./user.js";
 import Parameter from "./parameter.js";
-
+import File from "./file.js";
 const caseSchema = new mongoose.Schema(
   {
     parentId: {
@@ -36,7 +36,7 @@ const caseSchema = new mongoose.Schema(
     files: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "File",
+        ref: File,
         default: [],
       },
     ],

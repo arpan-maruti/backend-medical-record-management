@@ -3,6 +3,7 @@ import Case from "../models/case.js"; // Import the Case model
 import User from "../models/user.js"; // Import the User model (to validate userId)
 import Parameter from "../models/parameter.js"; // Import the Parameter model (for parameter validation)
 import mongoose from "mongoose";
+import File from "../models/file.js";
 
 const router = express.Router();
 
@@ -40,8 +41,6 @@ const validateCase = (data) => {
 
   return null;
 };
-
-
 
 const validateParameters = async (parameters) => {
   if (parameters && parameters.length) {
@@ -272,7 +271,7 @@ router.patch("/:id", async (req, res) => {
         message: "Case not found.",
       });
     }
-    if(parameters) {
+    if (parameters) {
       const invalidParams = await validateParameters(parameters);
       if (invalidParams) {
         return res.status(400).json({
@@ -287,18 +286,19 @@ router.patch("/:id", async (req, res) => {
     case_details.dateOfBreach = dateOfBreach || case_details.dateOfBreach;
     case_details.caseStatus = caseStatus || case_details.caseStatus;
     case_details.parameters = parameters || case_details.parameters;
-    case_details.files = files || case_details.files;
     case_details.isLoi = isLoi || case_details.isLoi;
     case_details.isDeleted = isDeleted || case_details.isDeleted;
     case_details.createdBy = createdBy || case_details.createdBy;
     case_details.modifiedBy = modifiedBy || case_details.modifiedBy;
     case_details.updatedAt = new Date();
-
-
+    if (files && files.length > 0) {
+      // Using `push` to append files to the existing array
+      case_details.files.push(...files);  // `...` spreads the new files into the array
+    }
     await case_details.save();
     res.status(200).json({
       code: "Success",
-      message: "User updated successfully.",
+      message: "Case updated successfully.",
       data: case_details,
     });
   } catch (err) {
@@ -310,7 +310,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-
+//PATCH : Soft-delete case
 router.patch("/delete/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -337,4 +337,29 @@ router.patch("/delete/:id", async (req, res) => {
   }
 });
 
+//GET: Get all the files of particular case
+router.get("/:id/file", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const case_details = await Case.findOne({ _id: id, isDeleted: false }).populate("files")  // Populate the 'files' field with full file details
+      .exec();
+    if (!case_details) {
+      return res.status(404).json({
+        code: "Not Found",
+        message: "Case not found.",
+      });
+    }
+    res.status(200).json({
+      code: "Success",
+      message: "Case updated successfully.",
+      data: case_details.files,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      code: "Internal Server Error",
+      message: "Error retrieving user.",
+      error: err.message,
+    });
+  }
+});
 export default router;

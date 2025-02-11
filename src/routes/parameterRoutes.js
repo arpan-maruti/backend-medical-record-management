@@ -9,41 +9,51 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   const { instructionId, parameterMsg, significanceLevel, createdBy, modifiedBy } = req.body;
 
+  if (!instructionId) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "instructionId is required."
+    });
+  }
+
+  if (!parameterMsg) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "parameterMsg is required."
+    });
+  }
+
+  if (!significanceLevel) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "significanceLevel is required."
+    });
+  }
+
+  if (!createdBy) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "createdBy is required."
+    });
+  }
+
+  if (!modifiedBy) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "modifiedBy is required."
+    });
+  }
+  const newParameter = new Parameter({
+    instructionId,
+    parameterMsg,
+    significanceLevel,
+    isDeleted: false,
+    createdBy,
+    modifiedBy,
+    createdOn: new Date(),
+    modifiedOn: new Date(),
+  });
   try {
-    if (!instructionId) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "instructionId is required."
-      });
-    }
-  
-    if (!parameterMsg) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "parameterMsg is required."
-      });
-    }
-  
-    if (!significanceLevel) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "significanceLevel is required."
-      });
-    }
-  
-    if (!createdBy) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "createdBy is required."
-      });
-    }
-  
-    if (!modifiedBy) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "modifiedBy is required."
-      });
-    }
     const instruction = await InstructionType.findById(instructionId);
     if (!instruction) {
       return res.status(400).json({
@@ -52,26 +62,14 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const createdByUser = await User.findById(createdBy);
-    const modifiedByUser = await User.findById(modifiedBy);
+    const createdByUser = await User.findOne({createdBy: createdBy, isDeleted: false});
+    const modifiedByUser = await User.findOne({modifiedBy: modifiedBy, isDeleted: false});
     if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "Invalid user IDs for createdBy or modifiedBy."
+        message: "Invalid userId provided in createdBy or modifiedBy.",
       });
     }
-
-    const newParameter = new Parameter({
-      instructionId,
-      parameterMsg,
-      significanceLevel,
-      isDeleted: false,
-      createdBy,
-      modifiedBy,
-      createdOn: new Date(),
-      modifiedOn: new Date(),
-    });
-
     await newParameter.save();
     res.status(201).json({
       code: "Created",

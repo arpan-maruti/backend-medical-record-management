@@ -5,37 +5,40 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   const { loiMsg, createdBy, modifiedBy } = req.body;
 
-  try {
-    const createdByUser = await User.findById(createdBy);
-    const modifiedByUser = await User.findById(modifiedBy);
-    
-    if (!loiMsg) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "Loi message is required",
-      });
-    }
+  if (!loiMsg) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "Loi message is required",
+    });
+  }
 
-    if (!createdBy) {
+  if (!createdBy) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "createdBy is required."
+    });
+  }
+
+  if (!modifiedBy) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: "modifiedBy is required."
+    });
+  }
+  try {
+    const createdByUser = await User.findOne({createdBy: createdBy, isDeleted: false});
+    const modifiedByUser = await User.findOne({modifiedBy: modifiedBy, isDeleted: false});
+    if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",
-        message: "createdBy is required."
-      });
-    }
-  
-    if (!modifiedBy) {
-      return res.status(400).json({
-        code: "Bad Request",
-        message: "modifiedBy is required."
+        message: "Invalid userId provided in createdBy or modifiedBy.",
       });
     }
     
     const newLoiType = new LoiType({
       loiMsg,
       createdBy,
-      modifiedBy,
-      createdOn: new Date(),
-      modifiedOn: new Date(),
+      modifiedBy
     });
 
     await newLoiType.save();

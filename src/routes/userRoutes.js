@@ -4,16 +4,39 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendPasswordSetupEmail } from "../utils/mailer.js";
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
+// Middleware: Automatically load user when a route contains :id
+router.param("id", async (req, res, next, id) => {
+  try {
+    const user = await User.findOne({ _id: id, isDeleted: false });
+    if (!user) {
+      return res.status(404).json({
+        code: "Not Found",
+        message: "User not found.",
+      });
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      code: "Internal Server Error",
+      message: "Error retrieving user.",
+      error: err.message,
+    });
+  }
+});
 
+//GET: Get all the users
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ isDeleted: false });
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// POST: Add a user
 router.post("/register", async (req, res) => {
   const {
     firstName,
@@ -112,32 +135,17 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({
-        code: "Not Found",
-        error: "User not found.",
-      });
-    }
-    res.status(200).json({
-      code: "Success",
-      message: "User retrieved successfully.",
-      data: user,
-    });
-  } catch {
-    res.status(500).json({
-      code: "Internal Server Error",
-      message: "An error occurred while retrieving user.",
-      error: err.message,
-    });
-  }
+//GET: Get user by id
+router.get("/:id", async(req,res)=> {
+  res.status(200).json({
+    code: "Success",
+    message: "User retrieved successfully.",
+    data: req.user,
+  });
 });
 
-router.patch("/:id", async (req, res) => {
-  const { id } = req.params;
+//PATCH: Update user by id
+router.patch("/:id", async(req,res) => {
   const {
     firstName,
     lastName,
@@ -151,32 +159,23 @@ router.patch("/:id", async (req, res) => {
   } = req.body;
 
   try {
-    const user = await User.findById(id);
+    req.user.firstName = firstName || req.user.firstName;
+    req.user.lastName = lastName || req.user.lastName;
+    req.user.email = email || req.user.email;
+    req.user.password = password || req.user.password;
+    req.user.countryCode = countryCode || req.user.countryCode;
+    req.user.phoneNumber = phoneNumber || req.user.phoneNumber;
+    req.user.userRole = userRole || req.user.userRole;
+    req.user.isDeleted = isDeleted || req.user.isDeleted; // Using nullish coalescing (to not overwrite undefined)
+    req.user.modifiedBy = modifiedBy || req.user.modifiedBy;
+    req.user.updatedAt = new Date(); // Update modification date
 
-    // If user is not found
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    // Update user fields with provided data
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.email = email || user.email;
-    user.password = password || user.password;
-    user.countryCode = countryCode || user.countryCode;
-    user.phoneNumber = phoneNumber || user.phoneNumber;
-    user.userRole = userRole || user.userRole;
-    user.isDeleted = isDeleted || user.isDeleted; // Using nullish coalescing (to not overwrite undefined)
-    user.modifiedBy = modifiedBy || user.modifiedBy;
-    user.modifiedAt = new Date(); // Update modification date
-
-    // Save the updated user
-    await user.save();
+    await req.user.save();
 
     res.status(200).json({
       code: "Success",
       message: "User updated successfully.",
-      data: user,
+      data: req.user,
     });
   } catch (err) {
     res.status(500).json({
@@ -187,6 +186,31 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+
+// PATCH: Soft delete a user by user_id
+// fix: isDeleted not set to true.
+router.patch("/delete/:id", async (req, res) => {
+  const { modifiedBy } = req.body;
+  try {
+    req.user.isDeleted = true;
+    req.user.modifiedBy = modifiedBy || req.user.modifiedBy;
+    req.user.updatedAt = new Date();
+    await req.user.save();
+
+    // Return success message if the user is successfully deleted
+    res.status(200).json({
+      code: "Success",
+      message: "User deleted successfully.",
+      data: req.user,
+    });
+  } catch (err) {
+    res.status(500).json({
+      code: "Internal Server Error",
+      message: "An error occurred while deleting the user.",
+      error: err.message,
+    });
+  }
+});
 router.post("/set-password", async (req, res) => {
   const { token, password } = req.body;
 
@@ -209,5 +233,6 @@ router.post("/set-password", async (req, res) => {
     res.status(400).json({ code: "Invalid Token", message: "Invalid or expired token" });
   }
 });
+
 
 export default router;

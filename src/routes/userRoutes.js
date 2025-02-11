@@ -1,5 +1,8 @@
 import express from "express";
 import User from "../models/user.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { sendPasswordSetupEmail } from "../utils/mailer.js";
 const router = express.Router();
 
 //GET: Get all the users
@@ -71,16 +74,22 @@ router.post("/register", async (req, res) => {
       firstName,
       lastName,
       email,
-      password,
+      password:null ,
       countryCode,
       phoneNumber,
       userRole,
-      isDeleted,
+      isDeleted: false,
       createdBy,
       modifiedBy,
     });
 
     await newUser.save();
+
+    // Generate a password setup token (valid for 30 min)
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30m" });
+
+    // Send email with password setup link
+    await sendPasswordSetupEmail(email, token);
 
     res.status(201).json({ code: "Created", data: newUser });
   } catch (err) {
@@ -110,23 +119,23 @@ router.get("/:id", async(req,res)=> {
   const {id} = req.params;
   try {
     const user = await User.findById(id);
-    if(!user) {
+    if (!user) {
       return res.status(404).json({
         code: "Not Found",
-        error: "User not found."
+        error: "User not found.",
       });
     }
     res.status(200).json({
       code: "Success",
       message: "User retrieved successfully.",
-      data: user
+      data: user,
     });
   } catch(err) {
     res.status(500).json({
       code: "Internal Server Error",
       message: "An error occurred while retrieving user.",
-      error: err.message
-    })
+      error: err.message,
+    });
   }
 });
 
@@ -220,6 +229,28 @@ router.patch("/:id", async (req, res) => {
       message: "An error occurred while deleting the user.",
       error: err.message,
     });
+  }
+});
+router.post("/set-password", async (req, res) => {
+  const { token, password } = req.body;
+
+  try {
+    console.log(password);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ email: decoded.email });
+
+    if (!user) {
+      return res.status(404).json({ code: "Not Found", message: "User not found" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ code: "Success", message: "Password set successfully. You can now log in." });
+  } catch (err) {
+    res.status(400).json({ code: "Invalid Token", message: "Invalid or expired token" });
   }
 });
 

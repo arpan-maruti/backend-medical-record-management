@@ -75,8 +75,8 @@ router.post("/", async (req, res) => {
 
   try {
     
-    const createdByUser = await User.findById(createdBy);
-    const modifiedByUser = await User.findById(modifiedBy);
+    const createdByUser = await User.findOne({createdBy: createdBy, isDeleted: false});
+    const modifiedByUser = await User.findOne({modifiedBy: modifiedBy, isDeleted: false});
     if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",
@@ -157,7 +157,7 @@ router.post("/", async (req, res) => {
 //GET: Get all cases
 router.get('/', async(req,res) => {
     try {
-        const cases = await Case.find({parentId: null});
+        const cases = await Case.find({parentId: null, isDeleted: false});
         if(cases.length === 0) {
             return res.status(200).json({
                 code: "Success",
@@ -182,7 +182,7 @@ router.get('/', async(req,res) => {
 router.get('/:id', async(req,res) => {
   const {id} = req.params;
   try {
-    const case_detail = await Case.findById(id);
+    const case_detail = await Case.findOne({_id:id, isDeleted: false});
     if(!case_detail) {
       return res.status(404).json({
         code: "Not Found",
@@ -204,11 +204,12 @@ router.get('/:id', async(req,res) => {
 });
 
 //GET: Get all the subcases of a given case.
+// verify this
 router.get('/:id/subcases', async(req,res) => {
   const {id} = req.params;
   try {
-    const case_details = await Case.findById(id);
-    if(!case_details) {
+    const case_details = await Case.find({_id:id, isDeleted: false});
+    if(!case_details || case_details.length === 0) {
       return res.status(404).json({
         code: "Not Found",
         error: "Case not found."

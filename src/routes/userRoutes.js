@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendPasswordSetupEmail } from "../utils/mailer.js";
 const router = express.Router();
+import twilio from 'twilio';
 const JWT_SECRET = process.env.JWT_SECRET;
 // Middleware: Automatically load user when a route contains :id
 router.param("id", async (req, res, next, id) => {
@@ -36,6 +37,56 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Invalid password' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Login successful',
+      phone: user.phone_number, // Send user's phone number
+    });
+  } catch (error) {
+    console.error('Login Error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Twilio Config
+const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+const TWILIO_PHONE = process.env.TWILIO_PHONE_NUMBER;
+
+// Generate OTP
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+router.post('/send-otp', async (req, res) => {
+  const { phone } = req.body;
+  const otp = generateOTP();
+
+  try {
+    await client.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: TWILIO_PHONE,
+      to: phone,
+    });
+
+    console.log(`OTP ${otp} sent to ${phone}`);
+    res.json({ success: true, message: 'OTP sent successfully' });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ success: false, message: 'Failed to send OTP' });
+  }
+});
 // POST: Add a user
 router.post("/register", async (req, res) => {
   const {

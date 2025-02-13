@@ -12,7 +12,7 @@ import CaseRoutes from './routes/caseRoutes.js';
 import FileRoutes from './routes/fileRoutes.js';
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 const dbUrl = process.env.MONGO_URI;
 
@@ -26,11 +26,11 @@ mongoose.connect(dbUrl+"medical")
 });
 
 app.use('/user', UserRoutes);
-app.use('/loiType', LoiTypeRoutes);
-app.use("/instruction-types", InstructionTypeRoutes);
-app.use("/parameters", ParameterRoutes);
 app.use('/case', CaseRoutes);
-app.use('/file', FileRoutes);
+app.use("/parameters", ParameterRoutes);
+app.use('/file', FileRoutes);  
+app.use("/instruction-types", InstructionTypeRoutes);
+app.use('/loiType', LoiTypeRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

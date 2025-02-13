@@ -7,8 +7,9 @@ const router = express.Router();
 import twilio from 'twilio';
 const JWT_SECRET = process.env.JWT_SECRET;
 // Middleware: Automatically load user when a route contains :id
-router.param("id", async (req, res, next, id) => {
+const getAllUsers = async (req, res, next) => {
   try {
+  const {id} = req.params
     const user = await User.findOne({ _id: id, isDeleted: false });
     if (!user) {
       return res.status(404).json({
@@ -25,7 +26,7 @@ router.param("id", async (req, res, next, id) => {
       error: err.message,
     });
   }
-});
+}
 
 //GET: Get all the users
 router.get("/", async (req, res) => {
@@ -187,7 +188,7 @@ router.post("/register", async (req, res) => {
 });
 
 //GET: Get user by id
-router.get("/:id", async(req,res)=> {
+router.get("/:id", getAllUsers, async(req,res)=> {
   res.status(200).json({
     code: "Success",
     message: "User retrieved successfully.",
@@ -196,7 +197,7 @@ router.get("/:id", async(req,res)=> {
 });
 
 //PATCH: Update user by id
-router.patch("/:id", async(req,res) => {
+router.patch("/:id", getAllUsers, async(req,res) => {
   const {
     firstName,
     lastName,
@@ -240,7 +241,7 @@ router.patch("/:id", async(req,res) => {
 
 // PATCH: Soft delete a user by user_id
 // fix: isDeleted not set to true.
-router.patch("/delete/:id", async (req, res) => {
+router.patch("/delete/:id", getAllUsers, async (req, res) => {
   const { modifiedBy } = req.body;
   try {
     req.user.isDeleted = true;
@@ -249,10 +250,10 @@ router.patch("/delete/:id", async (req, res) => {
     await req.user.save();
 
     // Return success message if the user is successfully deleted
-    res.status(200).json({
+    res.status(204).json({
       code: "Success",
       message: "User deleted successfully.",
-      data: req.user,
+      data: null,
     });
   } catch (err) {
     res.status(500).json({

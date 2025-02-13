@@ -7,6 +7,8 @@ import File from "../models/file.js";
 
 const router = express.Router();
 
+
+// Controllers
 const validateField = (field, fieldName) => {
   if (!field) {
     return {
@@ -64,8 +66,7 @@ const validateParameters = async (parameters) => {
   return null;
 };
 
-// POST: Create a new case
-router.post("/", async (req, res) => {
+const createNewCase = async (req, res) => {
   const {
     parentId,
     clientName,
@@ -162,10 +163,9 @@ router.post("/", async (req, res) => {
       message: "An error occurred while creating the case.",
     });
   }
-});
+}
 
-//GET: Get all cases
-router.get("/", async (req, res) => {
+const getAllCases = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -213,10 +213,9 @@ router.get("/", async (req, res) => {
       message: "An error occurred while fetching the cases.",
     });
   }
-});
+}
 
-//GET: Get specific case
-router.get("/:id", async (req, res) => {
+const getCase = async (req, res) => {
   const { id } = req.params;
   try {
     const case_detail = await Case.findOne({ _id: id, isDeleted: false });
@@ -238,11 +237,9 @@ router.get("/:id", async (req, res) => {
       error: err.message,
     });
   }
-});
+}
 
-//GET: Get all the subcases of a given case.
-// verify this
-router.get("/:id/subcases", async (req, res) => {
+const getSubacaseOfCase = async (req, res) => {
   const { id } = req.params;
   try {
 
@@ -286,11 +283,9 @@ router.get("/:id/subcases", async (req, res) => {
       error: err.message,
     });
   }
-});
+}
 
-//Patch: Update case details
-//todo : add other validations
-router.patch("/:id", async (req, res) => {
+const updateCase = async (req, res) => {
   const { id } = req.params;
   const {
     parentId,
@@ -334,8 +329,7 @@ router.patch("/:id", async (req, res) => {
     case_details.modifiedBy = modifiedBy || case_details.modifiedBy;
     case_details.updatedAt = new Date();
     if (files && files.length > 0) {
-      // Using `push` to append files to the existing array
-      case_details.files.push(...files);  // `...` spreads the new files into the array
+      case_details.files.push(...files);
     }
     await case_details.save();
     res.status(200).json({
@@ -350,15 +344,20 @@ router.patch("/:id", async (req, res) => {
       error: err.message,
     });
   }
-});
+}
 
-//PATCH : Soft-delete case
-router.patch("/delete/:id", async (req, res) => {
+const deleteCase = async (req, res) => {
   const { id } = req.params;
 
   const { modifiedBy } = req.body;
   try {
     const case_details = await Case.findOne({ _id: id, isDeleted: false });
+    if(!case_details) {
+      return res.status(404).json({
+        code: "Not found",
+        message: "Case not found"
+      })
+    }
     case_details.isDeleted = true;
     case_details.modifiedBy = modifiedBy || case_details.modifiedBy;
     case_details.updatedAt = new Date();
@@ -377,10 +376,9 @@ router.patch("/delete/:id", async (req, res) => {
       error: err.message,
     });
   }
-});
+}
 
-//GET: Get all the files of particular case
-router.get("/:id/file", async (req, res) => {
+const getFilesOfCase = async (req, res) => {
   const { id } = req.params;
   try {
     const case_details = await Case.findOne({ _id: id, isDeleted: false }).populate("files")  // Populate the 'files' field with full file details
@@ -403,5 +401,32 @@ router.get("/:id/file", async (req, res) => {
       error: err.message,
     });
   }
-});
+}
+
+
+// Routes
+// POST: Create a new case
+router.post("/", createNewCase);
+
+//GET: Get all cases
+router.get("/", getAllCases);
+
+//GET: Get specific case
+router.get("/:id", getCase);
+
+//GET: Get all the subcases of a given case.
+router.get("/:id/subcases", getSubacaseOfCase);
+
+//Patch: Update case details
+//todo : add other validations
+router.patch("/:id", updateCase);
+
+//PATCH : Soft-delete case
+router.patch("/delete/:id", deleteCase);
+
+//GET: Get all the files of particular case
+router.get("/:id/file", getFilesOfCase);
+
+
+
 export default router;

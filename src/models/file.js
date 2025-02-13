@@ -6,6 +6,10 @@ const { Schema } = mongoose;
 
 const fileSchema = new Schema(
   {
+    fileName: {
+      type: String,
+      required: true
+    },
     filePath: {
       type: String,
       required: true,

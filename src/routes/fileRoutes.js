@@ -1,13 +1,28 @@
 import express from "express";
 import File from "../models/file.js";  // Import the File model
 import User from "../models/user.js";  // Import the User model (to validate the createdBy and modifiedBy fields)
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
+// ref: path.extname(file.originalname) to get extenxtion.
 const router = express.Router();
-
+let fileExt, fileName;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Specify the directory where files should be stored
+    cb(null, 'public/files/');
+  },
+  filename: (req, file, cb) => {
+    fileExt = path.extname(file.originalname);
+    fileName = file.originalname;
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({storage});
 
 const validateFileFields = (req, res, next) => {
   const errors = [];
-  if(!req.body.filePath) errors.push("filePath");
   if (!req.body.fileType) errors.push("fileType");
   if (!req.body.fileFormat) errors.push("fileFormat");
   if (!req.body.createdBy) errors.push("createdBy");
@@ -21,12 +36,9 @@ const validateFileFields = (req, res, next) => {
   next();
 }
 
-
 // POST: Create a new file
-router.post("/", validateFileFields, async (req, res) => {
+router.post("/",upload.single("file"), validateFileFields, async (req, res) => {
   const {
-    filePath,
-    fileSize,
     fileType,
     fileFormat,
     noOfPages,
@@ -34,7 +46,6 @@ router.post("/", validateFileFields, async (req, res) => {
     createdBy,
     modifiedBy,
   } = req.body;
-
   // Validate fileType value
   const validFileTypes = File.schema.path('fileType').enumValues;
   if (!validFileTypes.includes(fileType)) {
@@ -54,7 +65,7 @@ router.post("/", validateFileFields, async (req, res) => {
   }
 
   try {
-    // Check if createdBy and modifiedBy are valid users
+    const filePath = `/files/${req.file.filename}`;
     const createdByUser = await User.findById(createdBy);
     const modifiedByUser = await User.findById(modifiedBy);
 
@@ -67,8 +78,9 @@ router.post("/", validateFileFields, async (req, res) => {
 
     // Create a new file
     const newFile = new File({
+      fileName: fileName, 
       filePath,
-      fileSize,
+      fileSize: req.file.size,
       fileType,
       fileFormat,
       noOfPages,

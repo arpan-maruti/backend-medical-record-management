@@ -4,21 +4,26 @@ import User from "../models/user.js";  // Import the User model (to validate the
 
 const router = express.Router();
 
-const validateFileFields = (fields) => {
-    const errors = [];
-  
-    if (!fields.filePath) errors.push("filePath is required.");
-    if (!fields.fileType) errors.push("fileType is required.");
-    if (!fields.fileFormat) errors.push("fileFormat is required.");
-    if (!fields.createdBy) errors.push("createdBy is required.");
-    if (!fields.modifiedBy) errors.push("modifiedBy is required.");
-  
-    return errors;
-  };
+
+const validateFileFields = (req, res, next) => {
+  const errors = [];
+  if(!req.body.filePath) errors.push("filePath");
+  if (!req.body.fileType) errors.push("fileType");
+  if (!req.body.fileFormat) errors.push("fileFormat");
+  if (!req.body.createdBy) errors.push("createdBy");
+  if (!req.body.modifiedBy) errors.push("modifiedBy");
+  if(errors.length > 0) {
+    return res.status(400).json({
+      code: "Bad Request",
+      message: `The following fields are required: ${errors.join(', ')}`
+    });
+  }
+  next();
+}
 
 
 // POST: Create a new file
-router.post("/", async (req, res) => {
+router.post("/", validateFileFields, async (req, res) => {
   const {
     filePath,
     fileSize,
@@ -29,14 +34,6 @@ router.post("/", async (req, res) => {
     createdBy,
     modifiedBy,
   } = req.body;
-
-  const errors = validateFileFields(req.body);
-  if (errors.length > 0) {
-    return res.status(400).json({
-      code: "Bad Request",
-      message: errors.join(" "),
-    });
-  }
 
   // Validate fileType value
   const validFileTypes = File.schema.path('fileType').enumValues;

@@ -56,7 +56,6 @@ router.post("/", async (req, res) => {
       });
     }
 
-
     await newInstruction.save();
     res.status(201).json({
       code: "Created",
@@ -71,7 +70,6 @@ router.post("/", async (req, res) => {
     });
   }
 });
-
 
 // Get instructions for a particular loiId
 router.get("/loi/:loiId", async (req, res) => {

@@ -85,12 +85,7 @@ router.post("/", async (req, res) => {
     return res.status(400).json(validationError);
   }
 
-  const validStatuses = [
-    "uploaded",
-    "inProgress",
-    "aiAnalysisCompleted",
-    "error",
-  ];
+  const validStatuses = Case.schema.path("caseStatus").enumValues;
 
   if (caseStatus && !validStatuses.includes(caseStatus)) {
     return res.status(400).json({
@@ -131,7 +126,7 @@ router.post("/", async (req, res) => {
           message: "The provided parentId is not a valid ObjectId.",
         });
       }
-
+    }
       const invalidParams = await validateParameters(parameters);
       if (invalidParams) {
         return res.status(400).json({
@@ -161,8 +156,7 @@ router.post("/", async (req, res) => {
         message: "Case created successfully.",
         data: newCase,
       });
-    }
-  } catch (err) {
+    } catch (err) {
     res.status(500).json({
       code: "Internal Server Error",
       message: "An error occurred while creating the case.",
@@ -173,18 +167,45 @@ router.post("/", async (req, res) => {
 //GET: Get all cases
 router.get("/", async (req, res) => {
   try {
-    const cases = await Case.find({ parentId: null, isDeleted: false });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    if(limit === -1) {
+      const cases = await Case.find({ parentId: null, isDeleted: false });
+      return res.status(200).json({
+        code: "Success",
+        length: cases.length,
+        message: "All cases fetched successfully.",
+        data: cases,
+      });
+    }
+    const skip = (page - 1) * limit;
+    const cases = await Case.find({ parentId: null, isDeleted: false }).skip(skip).limit(limit);
+    const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false });
+    const totalPages = Math.ceil(totalCases / limit);
     if (cases.length === 0) {
       return res.status(200).json({
         code: "Success",
         message: "No cases found.",
         data: [],
+        pagination: {
+          totalItems: totalCases,
+          totalPages: totalPages,
+          currentPage: page,
+          itemsPerPage: limit,
+        },
       });
     }
     res.status(200).json({
       code: "Success",
+      length: cases.length,
       message: "All cases fetched successfully.",
       data: cases,
+      pagination: {
+        totalItems: totalCases,
+        totalPages: totalPages,
+        currentPage: page,
+        itemsPerPage: limit,
+      },
     });
   } catch {
     res.status(500).json({
@@ -224,18 +245,39 @@ router.get("/:id", async (req, res) => {
 router.get("/:id/subcases", async (req, res) => {
   const { id } = req.params;
   try {
-    const case_details = await Case.find({ _id: id, isDeleted: false });
-    if (!case_details || case_details.length === 0) {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 3;
+    const subcases = await Case.find({ parentId: id , isDeleted: false });
+    if(limit === -1) {
+      return res.status(200).json({
+        code: "Success",
+        length: subcases.length,
+        message: "Subcase fetched successfully.",
+        data: subcases,
+      });
+    }
+    const skip = (page - 1) * limit;
+    const paginatedSubcases = await Case.find({ parentId: id, isDeleted: false }).skip(skip).limit(limit);
+    const totalCases = subcases.length;
+    const totalPages = Math.ceil(totalCases / limit);
+    if (!subcases || subcases.length === 0) {
       return res.status(404).json({
         code: "Not Found",
         error: "Case not found.",
       });
     }
-    const subcases = await Case.find({ parentId: id });
     res.status(200).json({
       code: "Success",
-      message: "Case retrieved successfully.",
-      data: subcases,
+      length: paginatedSubcases.length,
+      message: "All subcases fetched successfully.",
+      data: paginatedSubcases,
+      pagination: {
+        totalItems: totalCases,
+        totalPages: totalPages,
+        currentPage: page,
+        itemsPerPage: limit,
+      },
     });
   } catch (err) {
     res.status(500).json({

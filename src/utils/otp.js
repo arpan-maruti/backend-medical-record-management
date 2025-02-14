@@ -1,43 +1,62 @@
-// Import Twilio using ES module syntax
 import twilio from 'twilio';
 import dotenv from 'dotenv';
+
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Load environment variables
 dotenv.config({ path: '../../.env' });
 
-console.log('Environment Variables Loaded:');
-console.log(process.env);
-// Twilio Account SID and Auth Token
-const accountSid = process.env.TWILIO_SID; // Your Twilio Account SID
-const authToken = process.env.TWILIO_AUTH_TOKEN; // Your Twilio Auth Token
+// Twilio credentials
+const accountSid = process.env.TWILIO_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const serviceSid = process.env.TWILIO_SERVICE_SID;
+
+// Log to ensure environment variables are loaded
+console.log('TWILIO_SID:', accountSid);
+console.log('TWILIO_AUTH_TOKEN:', authToken);
+console.log('TWILIO_SERVICE_SID:', serviceSid);
+
+if (!accountSid || !authToken || !serviceSid) {
+  throw new Error('Twilio credentials are not defined in environment variables');
+}
 
 // Initialize Twilio client
 const client = twilio(accountSid, authToken);
 
-// Twilio Verify Service SID
-const serviceSid = process.env.TWILIO_SERVICE_SID; // Replace with your Twilio Verify Service SID
-
-// Phone number to send the OTP
-const toPhoneNumber = '+917863048907'; // Replace with the recipient's phone number
-
-// Send OTP via SMS
-const sendOTP = async () => {
+export const sendOTP = async (phoneNumber) => {
   try {
     const verification = await client.verify.v2.services(serviceSid)
       .verifications
-      .create({ to: toPhoneNumber, channel: 'sms' });
+      .create({ to: phoneNumber, channel: 'sms' });
 
-    console.log(`Verification SID: ${verification.sid}`);
+    console.log('Verification SID:', verification.sid);
+    return verification.sid; // Return the verification SID
   } catch (error) {
     console.error('Error sending OTP:', error);
+    throw error; // Propagate the error to the calling function
   }
 };
 
-// Call the function to send OTP
-sendOTP();
+export const verifyOTP = async (phoneNumber, code) => {
+  try {
+    console.log('Service SID:', serviceSid);
+    console.log('Phone Number:', phoneNumber);
+    console.log('OTP Code:', code);
 
+    // Call Twilio Verify API
+    const verificationCheck = await client.verify.v2.services(serviceSid)
+      .verificationChecks
+      .create({ to: phoneNumber, code });
 
-
-
-
-
-
-     
+    console.log('Verification Check Response:', verificationCheck);
+    return verificationCheck; // Return the entire verification check object
+  } catch (error) {
+    console.error('Error verifying OTP:', error.message);
+    if (error.code) {
+      console.error('Error Code:', error.code);
+      console.error('More Info:', error.moreInfo);
+    }
+    throw error; // Propagate the error for further handling
+  }
+};

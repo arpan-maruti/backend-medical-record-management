@@ -11,9 +11,14 @@ import ParameterRoutes from './routes/parameterRoutes.js';
 import CaseRoutes from './routes/caseRoutes.js';
 import FileRoutes from './routes/fileRoutes.js';
 const app = express();
-app.use(cors());
-app.use(express.json());
 
+app.use(express.json());
+const corsOptions = {
+  origin: 'http://localhost:4200', // Your frontend origin
+  credentials: true, // Allow credentials (cookies, authorization headers)
+};
+
+app.use(cors(corsOptions));
 const dbUrl = process.env.MONGO_URI;
 
 // Connect to MongoDB using Mongoose

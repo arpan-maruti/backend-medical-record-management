@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendPasswordSetupEmail } from "../utils/mailer.js";
 const router = express.Router();
-import twilio from 'twilio';
-const JWT_SECRET = process.env.JWT_SECRET;
+import { sendOTP } from '../utils/otp.js';
+import { verifyOTP } from '../utils/otp.js';
 // Middleware: Automatically load user when a route contains :id
 const getAllUsers = async (req, res, next) => {
   try {
@@ -63,31 +63,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Twilio Config
-const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-const TWILIO_PHONE = process.env.TWILIO_PHONE_NUMBER;
 
-// Generate OTP
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-router.post('/send-otp', async (req, res) => {
-  const { phone } = req.body;
-  const otp = generateOTP();
-
-  try {
-    await client.messages.create({
-      body: `Your OTP is: ${otp}`,
-      from: TWILIO_PHONE,
-      to: phone,
-    });
-
-    console.log(`OTP ${otp} sent to ${phone}`);
-    res.json({ success: true, message: 'OTP sent successfully' });
-  } catch (error) {
-    console.error('Error sending OTP:', error);
-    res.status(500).json({ success: false, message: 'Failed to send OTP' });
-  }
-});
 // POST: Add a user
 router.post("/register", async (req, res) => {
   const {
@@ -285,6 +261,100 @@ router.post("/set-password", async (req, res) => {
     res.status(400).json({ code: "Invalid Token", message: "Invalid or expired token" });
   }
 });
+
+
+
+// Route to send OTP
+router.post('/send-otp', async (req, res) => {
+  console.log('Received /send-otp request with email:', req.body.email);
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false, error: 'Email is required.' });
+  }
+
+  try {
+    // Step 1: Find the user by email
+    const user = await User.findOne({ email, isDeleted: false });
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found.' });
+    }
+
+    const { phoneNumber, countryCode } = user;
+
+    // Step 2: Ensure the user has a phone number
+    if (!phoneNumber) {
+      return res.status(400).json({ success: false, error: 'User does not have a phone number.' });
+    }
+
+    const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+    console.log('Sending OTP to:', fullPhoneNumber);
+
+    // Step 3: Send the OTP using your sendOTP function
+    const verificationSid = await sendOTP(fullPhoneNumber);
+
+    // Step 4: Respond with success
+    return res.status(200).json({
+      success: true,
+      message: 'OTP sent successfully.',
+      verificationSid,
+    });
+  } catch (error) {
+    console.error('Error in /send-otp:', error);
+    return res.status(500).json({ success: false, error: 'Failed to send OTP.' });
+  }
+});
+
+// Route to verify OTP
+router.post('/verify-otp', async (req, res) => {
+  
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ success: false, error: 'Email and OTP code are required.' });
+  }
+
+  try {
+    // Step 1: Find the user by email
+    const user = await User.findOne({ email, isDeleted: false });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found.' });
+    }
+
+    const { phoneNumber, countryCode } = user;
+
+    // Step 2: Ensure the user has a phone number
+    if (!phoneNumber) {
+      return res.status(400).json({ success: false, error: 'User does not have a phone number.' });
+    }
+
+    const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+    console.log(fullPhoneNumber+" "+otp);
+    // Step 3: Verify the OTP
+    const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
+
+    if (verificationCheck.status === 'approved') {
+
+      const token = jwt.sign({ phoneNumber }, JWT_SECRET, { expiresIn: '1h' });
+      console.log(token);
+      return res.status(200).json({
+        success: true,
+        message: 'OTP verification successful.',
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'OTP verification failed.',
+        status: verificationCheck.status,
+      });
+    }
+  } catch (error) {
+    console.error('Error in /verify-otp:', error);
+    return res.status(500).json({ success: false, error: 'Failed to verify OTP.' });
+  }
+});
+
 
 
 export default router;

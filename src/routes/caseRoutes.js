@@ -9,50 +9,33 @@ const router = express.Router();
 
 
 // Controllers
-const validateField = (field, fieldName) => {
-  if (!field) {
-    return {
+const validateCase = (req, res, next) => {
+  const error= [];
+  const {clientName, refNumber, dateOfBreach, caseStatus, parameters} = req.body;
+  if(!clientName) error.push("clientName ");
+  if(!refNumber) error.push("refNumber ");
+  if(!dateOfBreach) error.push("dateOfBreach ");
+  if(!caseStatus) error.push("caseStatus ");
+  if (!parameters || parameters.length === 0) error.push("parameters ");
+  if(error.length > 0) {
+    return res.status(400).json({
       code: "Bad Request",
-      message: `${fieldName} is required.`,
-    };
+      message: `${error}: are required.`
+    })
   }
-  return null;
+  next();
 };
-
-const validateCase = (data) => {
-  const { clientName, refNumber, dateOfBreach, caseStatus, parameters } = data;
-
-  let error = validateField(clientName, "clientName");
-  if (error) return error;
-
-  error = validateField(refNumber, "refNumber");
-  if (error) return error;
-
-  error = validateField(dateOfBreach, "dateOfBreach");
-  if (error) return error;
-
-  error = validateField(caseStatus, "caseStatus");
-  if (error) return error;
-
-  if (!parameters || parameters.length === 0) {
-    return {
-      code: "Bad Request",
-      message: "parameters are required and must not be empty.",
-    };
-  }
-
-  return null;
-};
-
-const validateParameters = async (parameters) => {
+const validateParameters = async (req, res, next) => {
+  const {parameters} = req.body;
   if (parameters && parameters.length) {
     const invalidIds = parameters.filter(
       (id) => !mongoose.Types.ObjectId.isValid(id)
     );
     if (invalidIds.length > 0) {
-      return `The following parameter IDs are invalid: ${invalidIds.join(
-        ", "
-      )}`;
+      return res.status(400).json({
+        code: "Bad Request",
+        message: `${invalidIds} are invlaid.`,
+      });
     }
 
     const validParameters = await Parameter.find({
@@ -60,10 +43,13 @@ const validateParameters = async (parameters) => {
     });
 
     if (validParameters.length !== parameters.length) {
-      return "One or more invalid parameters.";
+      return res.status(400).json({
+        code: "Bad Request",
+        message: invalidParams,
+      });
     }
   }
-  return null;
+  next();
 };
 
 const createNewCase = async (req, res) => {
@@ -80,11 +66,6 @@ const createNewCase = async (req, res) => {
     createdBy,
     modifiedBy,
   } = req.body;
-
-  const validationError = validateCase(req.body);
-  if (validationError) {
-    return res.status(400).json(validationError);
-  }
 
   const validStatuses = Case.schema.path("caseStatus").enumValues;
 
@@ -128,13 +109,6 @@ const createNewCase = async (req, res) => {
         });
       }
     }
-      const invalidParams = await validateParameters(parameters);
-      if (invalidParams) {
-        return res.status(400).json({
-          code: "Bad Request",
-          message: invalidParams,
-        });
-      }
       const newCase = new Case({
         parentId: parentId || null,
         clientName,
@@ -406,7 +380,7 @@ const getFilesOfCase = async (req, res) => {
 
 // Routes
 // POST: Create a new case
-router.post("/", createNewCase);
+router.post("/", validateCase, validateParameters, createNewCase);
 
 //GET: Get all cases
 router.get("/", getAllCases);
@@ -419,7 +393,7 @@ router.get("/:id/subcases", getSubacaseOfCase);
 
 //Patch: Update case details
 //todo : add other validations
-router.patch("/:id", updateCase);
+router.patch("/:id", validateParameters, updateCase);
 
 //PATCH : Soft-delete case
 router.patch("/delete/:id", deleteCase);

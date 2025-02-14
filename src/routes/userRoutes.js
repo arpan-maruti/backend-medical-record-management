@@ -336,7 +336,7 @@ router.post('/verify-otp', async (req, res) => {
 
     if (verificationCheck.status === 'approved') {
 
-      const token = jwt.sign({ phoneNumber }, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ phoneNumber }, process.env.JWT_SECRET, { expiresIn: '1h' });
       console.log(token);
       return res.status(200).json({
         success: true,

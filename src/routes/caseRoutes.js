@@ -335,8 +335,9 @@ const deleteCase = async (req, res) => {
     case_details.isDeleted = true;
     case_details.modifiedBy = modifiedBy || case_details.modifiedBy;
     case_details.updatedAt = new Date();
-    await case_details.save();
 
+    await case_details.save();
+    
     // Return success message if the user is successfully deleted
     res.status(200).json({
       code: "Success",

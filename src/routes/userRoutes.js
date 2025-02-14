@@ -6,7 +6,8 @@ import { sendPasswordSetupEmail } from "../utils/mailer.js";
 const router = express.Router();
 import twilio from 'twilio';
 const JWT_SECRET = process.env.JWT_SECRET;
-// Middleware: Automatically load user when a route contains :id
+
+//Middleware: Fetch all users
 const getAllUsers = async (req, res, next) => {
   try {
   const {id} = req.params
@@ -240,7 +241,6 @@ router.patch("/:id", getAllUsers, async(req,res) => {
 
 
 // PATCH: Soft delete a user by user_id
-// fix: isDeleted not set to true.
 router.patch("/delete/:id", getAllUsers, async (req, res) => {
   const { modifiedBy } = req.body;
   try {

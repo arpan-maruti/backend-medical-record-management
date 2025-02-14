@@ -5,7 +5,7 @@ import Parameter from "../models/parameter.js";
 
 const router = express.Router();
 
-// Create a new Parameter
+//POST: Add new Parameter
 router.post("/", async (req, res) => {
   const { instructionId, parameterMsg, significanceLevel, createdBy, modifiedBy } = req.body;
 
@@ -85,13 +85,13 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Get: Get parameters acc to instructionMsg selected
 router.get("/instruction/:instructionId", async (req, res) => {
   const { instructionId } = req.params;
   try {
-    // Validate if InstructionType exists
     const instruction = await InstructionType.findById(instructionId);
     if (!instruction) {
-      return res.status(404).json({ error: "Instruction Type not found." });
+      return res.status(404).json({ code: "Not Found", message: "Instruction Type not found." });
     }
     const parameters = await Parameter.find({ instructionId, isDeleted: false });
     if (parameters.length === 0) {

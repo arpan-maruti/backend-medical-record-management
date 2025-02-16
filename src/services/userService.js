@@ -31,8 +31,10 @@ export const registerUser = async({
     await newUser.save();
     const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "30m" });
     await sendPasswordSetupEmail(email, token);
-
-    return newUser;
+    const updatedUser = newUser.toObject();
+    delete updatedUser._id;
+    delete updatedUser.password;
+    return updatedUser;
 };
 
 
@@ -116,12 +118,12 @@ export const verifyUserOTP = async(email, otp) => {
 
 
 export const getAllUsers = async() => {
-    return await User.find({ isDeleted: false });
+    return await User.find({ isDeleted: false }).select('-_id -password');
 };
 
 
 export const getUserById = async(id) => {
-    const user = await User.findOne({ _id: id, isDeleted: false });
+    const user = await User.findOne({ _id: id, isDeleted: false }).select('-_id -password');
     if (!user) {
         throw new Error('User not found');
     }

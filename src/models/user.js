@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    validate: {
+      async validator(value) {
+        const user = await User.findOne({ email: value });
+        return !user; // Ensure the email is not already in use
+      },
+      message: 'Email already in use.'
+    },
     match: [/\S+@\S+\.\S+/, 'Please use a valid email address'],
   },
   password: {

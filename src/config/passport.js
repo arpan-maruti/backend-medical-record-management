@@ -27,6 +27,10 @@ passport.use(
         }
     })
 );
+
+
+
+
 const clientId = crypto.randomUUID();
 const clientSecret = crypto.randomBytes(32).toString("hex");
 

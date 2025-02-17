@@ -15,7 +15,7 @@ export const createLoiType = async (req, res) => {
         if(!createdByUser || !modifiedByUser) {
             return res.status(400).json({
                 code: "Bad Request",
-                message: "Invalid userId provided in createdBy or modifiedBy.",
+                message: "Invalid userId provided in created_by or modified_by.",
               });
         }
 

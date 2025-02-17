@@ -20,5 +20,5 @@ export const createLoiTypeService = async ({
 }
 
 export const getLoiTypesService = async() => {
-    return await LoiType.find();
+    return LoiType.find();
 }

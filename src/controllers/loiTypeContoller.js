@@ -19,7 +19,7 @@ export const createLoiType = async (req, res) => {
               });
         }
 
-        const newLoiType = await loiTypeService.createLoiTypeService(loiMsg, createdBy, modifiedBy);
+        const newLoiType = await loiTypeService.createLoiTypeService({loiMsg, createdBy, modifiedBy});
         res.status(201).json({
             code: "Created",
             data: newLoiType,

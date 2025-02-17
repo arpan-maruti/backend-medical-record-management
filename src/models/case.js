@@ -51,12 +51,12 @@ const caseSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User,
-      required: true,
+      required: [true, 'created_by is required'],
     },
     modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User,
-      required: true,
+      required: [true, 'modified_by is required'],
     },
   },
   {

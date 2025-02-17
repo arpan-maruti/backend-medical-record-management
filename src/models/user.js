@@ -4,17 +4,17 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    required: true,
+    required: [true, 'first_name is required'],
     maxlength: 15,
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, 'last_name is required'],
     maxlength: 15,
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'email is required'],
     unique: true,
     validate: {
       async validator(value) {
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Email already in use.'
     },
-    match: [/\S+@\S+\.\S+/, 'Please use a valid email address'],
+    match: [/\S+@\S+\.\S+/, 'Please use a valid email'],
   },
   password: {
     type: String,
@@ -32,15 +32,14 @@ const userSchema = new mongoose.Schema({
   },
   countryCode: {
     type: String,
-    required: true,
+    required: [true, 'country_code is required'],
     maxlength: 7,
-
   },
   phoneNumber: {
     type: String,
-    required: true,
+    required: [true, 'phone_number is required'],
     unique: true,
-    match: [/^[0-9\-\+\(\)\s]*$/, 'Please use a valid phone number']
+    match: [/^[0-9\-\(\)\s]*$/, 'Please use a valid phone_number']
   },
   userRole: {
     type: String,
@@ -69,5 +68,15 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+// const newUser = User({
+//   "firstName": "admin2",
+//   "lastName": "admin2",
+//   "email": "admin2@gmail.com",
+//   "countryCode": "+1",
+//   "phoneNumber": "+1233699990"
+// });
+
+// newUser.save();
 
 export default User;

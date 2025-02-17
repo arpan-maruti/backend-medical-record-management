@@ -6,31 +6,31 @@ const parameterSchema = new mongoose.Schema(
   {
     instructionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: InstructionType, // Reference to InstructionType
-      required: true,
+      ref: InstructionType,
+      required: [true, 'instruction_id is required'],
     },
     parameterMsg: {
       type: String,
-      required: true,
+      required: [true, 'parameter_msg is required'],
     },
     significanceLevel: {
       type: String,
-      enum: ["Low", "Moderate", "High"], // Enum values
+      enum: ["Low", "Moderate", "High"],
       required: true,
     },
     isDeleted: {
       type: Boolean,
-      default: false, // Default value is false
+      default: false,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User, // Reference to User
-      required: true,
+      ref: User,
+      required: [true, 'created_by is required'],
     },
     modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User, // Reference to User
-      required: true,
+      ref: User,
+      required: [true, 'modified_by is required'],
     },
   },
   {

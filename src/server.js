@@ -99,7 +99,7 @@ app.use(passport.initialize());
 const dbUrl = process.env.MONGO_URI;
 
 // Connect to MongoDB using Mongoose
-mongoose.connect(dbUrl + "medical")
+mongoose.connect(dbUrl)
     .then(() => {
         console.log('Connected to MongoDB');
     })

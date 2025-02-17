@@ -7,21 +7,21 @@ const instructionTypeSchema = new mongoose.Schema(
     loiId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: LoiType, // Reference to LoiType
-      required: true,
+      required: [true, 'loi_id is required.'],
     },
     instructionMsg: {
       type: String,
-      required: true,
+      required: [true, 'instruction_msg is required'],
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User, // Reference to User
-      required: true,
+      required: [true, 'created_by is required'],
     },
     modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User, // Reference to User
-      required: true,
+      required: [true, 'modified_by is required'],
     },
   },
   {

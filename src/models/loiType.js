@@ -3,17 +3,17 @@ import User from './user.js';
 const loiTypeSchema = new mongoose.Schema({
   loiMsg: {
     type: String,
-    required: true,
+    required: [true, 'loi_msg is required'],
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: User,
-    required: true,
+    required: [true, 'created_by is required'],
   },
   modifiedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: User,
-    required: true,
+    required: [true, 'modified_by is required'],
   }
 }, 
 {

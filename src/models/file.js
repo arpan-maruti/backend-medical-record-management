@@ -8,11 +8,11 @@ const fileSchema = new Schema(
   {
     fileName: {
       type: String,
-      required: true
+      required: [true, 'file_name is required']
     },
     filePath: {
       type: String,
-      required: true,
+      required: [true, 'file_path is required'],
     },
     fileSize: {
       type: Number,
@@ -46,12 +46,12 @@ const fileSchema = new Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User,
-      required: true,
+      required: [true, 'created_by is required'],
     },
     modifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: User,
-      required: true,
+      required: [true, 'modified_by is required'],
     },
   },
   { timestamps: true }

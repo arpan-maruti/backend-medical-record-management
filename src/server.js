@@ -31,16 +31,7 @@ app.use(express.static('public'));
 
 
 // Attach JWT from cookie to Authorization header
-const attachJwtMiddleware = (req, res, next) => {
-    console.log(req.cookies); // This should now show parsed cookies.
-    
-    const token = req.cookies.jwt;
-    if (token) {
-        req.headers['authorization'] = `Bearer ${token}`;
-        console.log('Authorization Header:', req.headers['authorization']);
-    }
-    next();
-};
+
 
 const roleMiddleware = (allowedRoles) => {
     return (req, res, next) => {
@@ -81,7 +72,7 @@ app.use('/case', CaseRoutes);
 app.use("/parameters", ParameterRoutes);
 app.use('/file', FileRoutes);
 app.use("/instruction-types", InstructionTypeRoutes);
-app.use('/loiType', attachJwtMiddleware , passport.authenticate('jwt', { session: false }), roleMiddleware(['user']), LoiTypeRoutes);
+app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user']), LoiTypeRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

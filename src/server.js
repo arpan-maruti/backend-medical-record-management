@@ -12,9 +12,9 @@ import CaseRoutes from './routes/caseRoutes.js';
 import FileRoutes from './routes/fileRoutes.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
-import User from './models/user.js';
-import jwt from 'jsonwebtoken';
 
+import roleMiddleware from './middlewares/roleMiddlewares.js';
+    
 import './config/passport.js';
 const app = express();
 const corsOptions = {
@@ -33,23 +33,7 @@ app.use(express.static('public'));
 // Attach JWT from cookie to Authorization header
 
 
-const roleMiddleware = (allowedRoles) => {
-    return (req, res, next) => {
-        // Ensure the user is authenticated and req.user is populated by Passport
-        if (!req.user) {
-            return res.status(403).json({ message: 'Unauthorized access' });
-        }
 
-        // Check if the user's role is allowed
-        const { userRole } = req.user; // req.user is populated by passport.authenticate
-        if (!allowedRoles.includes(userRole)) {
-            return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });
-        }
-
-        // User is authorized
-        next();
-    };
-};
 
 
 
@@ -72,7 +56,7 @@ app.use('/case', CaseRoutes);
 app.use("/parameters", ParameterRoutes);
 app.use('/file', FileRoutes);
 app.use("/instruction-types", InstructionTypeRoutes);
-app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user']), LoiTypeRoutes);
+app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), LoiTypeRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

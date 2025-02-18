@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'phone_number is required'],
     unique: true,
-    match: [/^[0-9\-\(\)\s]*$/, 'Please use a valid phone_number']
+    match: [/^[0-9\-\+\(\)\s]*$/, 'Please use a valid phone_number']
   },
   userRole: {
     type: String,

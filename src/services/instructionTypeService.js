@@ -16,7 +16,6 @@ export const createInstructionTypeService = async({instructionMsg, loiId, create
 
 export const getInstructionTypeByLoiIdService = async({id}) => {
     const loiType = await LoiType.findById(id);
-    console.log(loiType);
     if( !loiType) {
         throw new Error("loi_type not found");
     }

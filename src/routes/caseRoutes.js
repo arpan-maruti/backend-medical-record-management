@@ -10,14 +10,14 @@ const router = express.Router();
 
 // Controllers
 const validateCase = (req, res, next) => {
-  const error= [];
-  const {clientName, refNumber, dateOfBreach, caseStatus, parameters} = req.body;
-  if(!clientName) error.push("clientName ");
-  if(!refNumber) error.push("refNumber ");
-  if(!dateOfBreach) error.push("dateOfBreach ");
-  if(!caseStatus) error.push("caseStatus ");
+  const error = [];
+  const { clientName, refNumber, dateOfBreach, caseStatus, parameters } = req.body;
+  if (!clientName) error.push("clientName ");
+  if (!refNumber) error.push("refNumber ");
+  if (!dateOfBreach) error.push("dateOfBreach ");
+  if (!caseStatus) error.push("caseStatus ");
   if (!parameters || parameters.length === 0) error.push("parameters ");
-  if(error.length > 0) {
+  if (error.length > 0) {
     return res.status(400).json({
       code: "Bad Request",
       message: `${error}: are required.`
@@ -26,7 +26,7 @@ const validateCase = (req, res, next) => {
   next();
 };
 const validateParameters = async (req, res, next) => {
-  const {parameters} = req.body;
+  const { parameters } = req.body;
   if (parameters && parameters.length) {
     const invalidIds = parameters.filter(
       (id) => !mongoose.Types.ObjectId.isValid(id)
@@ -53,6 +53,7 @@ const validateParameters = async (req, res, next) => {
 };
 
 const createNewCase = async (req, res) => {
+  try {
   const {
     parentId,
     clientName,
@@ -78,15 +79,8 @@ const createNewCase = async (req, res) => {
     });
   }
 
-  try {
-    const createdByUser = await User.findOne({
-      createdBy: createdBy,
-      isDeleted: false,
-    });
-    const modifiedByUser = await User.findOne({
-      modifiedBy: modifiedBy,
-      isDeleted: false,
-    });
+  const createdByUser = await User.findById(createdBy).where('isDeleted').equals(false);
+  const modifiedByUser = await User.findById(modifiedBy).where('isDeleted').equals(false);
     if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",
@@ -109,29 +103,29 @@ const createNewCase = async (req, res) => {
         });
       }
     }
-      const newCase = new Case({
-        parentId: parentId || null,
-        clientName,
-        refNumber,
-        dateOfBreach,
-        caseStatus,
-        parameters,
-        files: files || [],
-        isLoi: isLoi || false,
-        isDeleted: isDeleted || false,
-        createdBy,
-        modifiedBy,
-      });
+    const newCase = new Case({
+      parentId: parentId || null,
+      clientName,
+      refNumber,
+      dateOfBreach,
+      caseStatus,
+      parameters,
+      files: files || [],
+      isLoi: isLoi || false,
+      isDeleted: isDeleted || false,
+      createdBy,
+      modifiedBy,
+    });
 
-      // Save the new case to the database
-      await newCase.save();
+    // Save the new case to the database
+    await newCase.save();
 
-      res.status(201).json({
-        code: "Created",
-        message: "Case created successfully.",
-        data: newCase,
-      });
-    } catch (err) {
+    res.status(201).json({
+      code: "Created",
+      message: "Case created successfully.",
+      data: newCase,
+    });
+  } catch (err) {
     res.status(500).json({
       code: "Internal Server Error",
       message: "An error occurred while creating the case.",
@@ -141,10 +135,11 @@ const createNewCase = async (req, res) => {
 
 const getAllCases = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 5;
+    let query = Case.find({ parentId: null, isDeleted: false });
     if(limit === -1) {
-      const cases = await Case.find({ parentId: null, isDeleted: false });
+      const cases = await query;
       return res.status(200).json({
         code: "Success",
         length: cases.length,
@@ -153,9 +148,13 @@ const getAllCases = async (req, res) => {
       });
     }
     const skip = (page - 1) * limit;
-    const cases = await Case.find({ parentId: null, isDeleted: false }).skip(skip).limit(limit);
-    const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false });
+    query = query.skip(skip).limit(limit);
+    const totalCases = await Case.countDocuments({parentId: null, isDeleted:false});
     const totalPages = Math.ceil(totalCases / limit);
+    if(skip > totalCases) throw new Error("This page does not exist");
+
+    const cases = await query;
+
     if (cases.length === 0) {
       return res.status(200).json({
         code: "Success",
@@ -181,13 +180,41 @@ const getAllCases = async (req, res) => {
         itemsPerPage: limit,
       },
     });
-  } catch {
+  } catch(err) {
     res.status(500).json({
       code: "Internal Server Error",
       message: "An error occurred while fetching the cases.",
+      error:err
     });
   }
 }
+
+// const getAllCases = async (req, res) => {
+//   try {
+//     console.log(req.query);
+
+//     const cases = await Case.find({ parentId: null, isDeleted: false });
+//     if (!cases) {
+//       return res.status(200).json({
+//         code: "Success",
+//         message: "No cases found.",
+//         data: [],
+//       })
+//     }
+//     res.status(200).json({
+//       code: "Success",
+//       length: cases.length,
+//       message: "All cases fetch successfully",
+//       data: cases
+//     })
+//   } catch (err) {
+//     res.status(500).json({
+//       code: "Internal Server Error",
+//       message: "An error occurred while fetching the cases.",
+//     })
+//   }
+
+// }
 
 const getCase = async (req, res) => {
   const { id } = req.params;
@@ -219,8 +246,8 @@ const getSubacaseOfCase = async (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 3;
-    const subcases = await Case.find({ parentId: id , isDeleted: false });
-    if(limit === -1) {
+    const subcases = await Case.find({ parentId: id, isDeleted: false });
+    if (limit === -1) {
       return res.status(200).json({
         code: "Success",
         length: subcases.length,
@@ -337,7 +364,7 @@ const deleteCase = async (req, res) => {
     case_details.updatedAt = new Date();
 
     await case_details.save();
-    
+
     // Return success message if the user is successfully deleted
     res.status(200).json({
       code: "Success",

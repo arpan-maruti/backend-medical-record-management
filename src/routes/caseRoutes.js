@@ -79,14 +79,9 @@ const createNewCase = async (req, res) => {
   }
 
   try {
-    const createdByUser = await User.findOne({
-      createdBy: createdBy,
-      isDeleted: false,
-    });
-    const modifiedByUser = await User.findOne({
-      modifiedBy: modifiedBy,
-      isDeleted: false,
-    });
+    const createdByUser = await User.findById(createdBy).where('isDeleted').equals(false);
+    const modifiedByUser = await User.findById(modifiedBy).where('isDeleted').equals(false);
+    
     if (!createdByUser || !modifiedByUser) {
       return res.status(400).json({
         code: "Bad Request",

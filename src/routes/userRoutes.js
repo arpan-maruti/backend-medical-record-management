@@ -11,14 +11,15 @@ import {
   // updateUserController, 
   // deleteUserController 
 } from "../controllers/userContoller.js";
-import { getAllUsers } from "../services/userService.js";
+import roleMiddleware from '../middlewares/roleMiddlewares.js';
+import passport from 'passport';
 
 const router = express.Router();
 
 // Routes
 router.get("/", getUsers);
 router.get("/:id", getUserByIdController);
-router.post("/register", register);
+router.post("/register",passport.authenticate('jwt', { session: false }),roleMiddleware(['admin']) ,register);
 router.post("/login", login);
 router.post("/set-password", setPasswordController);
 router.post("/send-otp", sendOTPController);

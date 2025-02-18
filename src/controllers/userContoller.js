@@ -144,6 +144,7 @@ export const verifyOTPController = async (req, res) => {
             httpOnly: false,
             secure: false,
             sameSite: 'strict',
+           
         });
         // this.cookieService.set('abc', '123');
 

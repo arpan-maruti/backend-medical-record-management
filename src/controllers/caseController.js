@@ -177,10 +177,7 @@ export const getFilesOfCase = async (req, res) => {
 
 export const getAllCases = async (req, res) => {
     try {
-        const page = req.query.page * 1 || 1;
-        const limit = req.query.limit * 1 || 5;
-
-        const { cases, pagination } = await caseService.getAllCasesService(page, limit);
+        const { cases, pagination } = await caseService.getAllCasesService(req, res);
 
         res.status(200).json({
             code: "Success",

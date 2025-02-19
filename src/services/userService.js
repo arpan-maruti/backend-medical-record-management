@@ -44,7 +44,7 @@ export const loginUser = async(email, password) => {
         throw new Error('User not found');
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compare(password, user.password);
     if (!isMatch) {
         throw new Error('Invalid password');
     }
@@ -108,7 +108,7 @@ export const verifyUserOTP = async(email, otp) => {
         id: user._id, // User ID
         role: user.role // User Role (e.g., admin, manager, etc.)
     };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
     // Store JWT in a secure cookie
     console.log("token" + token);
 

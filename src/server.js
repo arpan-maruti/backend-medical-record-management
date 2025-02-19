@@ -53,11 +53,18 @@ mongoose.connect(dbUrl)
 
 app.use('/user', UserRoutes);
 app.use('/case', CaseRoutes);
-app.use("/parameters", ParameterRoutes);
+app.use("/parameters",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), ParameterRoutes);
 app.use('/file', FileRoutes);
-app.use("/instruction-types", InstructionTypeRoutes);
+app.use("/instruction-types", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), InstructionTypeRoutes);
 app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), LoiTypeRoutes);
 // Start the server
+
+app.all("*",(req, res,next)=>{
+    res.status(404).json({
+        status:"fail",
+        message: `Can't find ${req.originalUrl} on thie server!`
+    });
+})
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

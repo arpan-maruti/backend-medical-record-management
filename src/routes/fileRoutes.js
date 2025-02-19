@@ -2,7 +2,8 @@ import express from "express";
 import multer from 'multer';
 import path from 'path';
 import { createFileController } from "../controllers/fileController.js";
-
+import passport from "passport";
+import roleMiddleware from "../middlewares/roleMiddlewares.js";
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -15,7 +16,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.post("/", upload.single("file"), createFileController);
+router.post("/",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), upload.single("file"), createFileController);
 // router.delete("/:id", deleteFileController);
 
 export default router;

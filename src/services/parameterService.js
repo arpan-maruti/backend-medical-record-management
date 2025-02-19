@@ -21,6 +21,5 @@ export const getParametersByInstructionService = async({id}) => {
         throw new Error("instruction not found");
     }
     const parameters = await Parameter.find({instructionId:id, isDeleted: false})
-    console.log(parameters);
     return parameters;
 }

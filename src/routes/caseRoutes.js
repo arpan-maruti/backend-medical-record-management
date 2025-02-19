@@ -136,14 +136,6 @@ const getAllCases = async (req, res) => {
 // }
 
 
-
-
-
-
-
-
-
-
 // Routes
 // POST: Create a new case
 router.post("/", validateCase, validateParameters, caseController.addCase);

@@ -84,6 +84,7 @@ export const getCase = async (req, res) => {
     try {
         const { id } = req.params;
         const newCase = await caseService.getCaseService({ id });
+        
         res.status(200).json({
             code: "Success",
             message: "Case retrieved successfully.",
@@ -178,7 +179,7 @@ export const getFilesOfCase = async (req, res) => {
 export const getAllCases = async (req, res) => {
     try {
         const { cases, pagination } = await caseService.getAllCasesService(req, res);
-
+        console.log(cases);
         res.status(200).json({
             code: "Success",
             length: cases.length,

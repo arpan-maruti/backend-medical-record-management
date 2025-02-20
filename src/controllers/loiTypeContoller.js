@@ -1,7 +1,7 @@
 import * as loiTypeService from '../services/loiTypeService.js';
 import Joi from 'joi';
 import User from '../models/user.js';
-
+import convertKeysToSnakeCase from '../utils/snakeCase.js';
 const createLoiTypeSchema = Joi.object({
     loiMsg: Joi.string().required().min(1).max(500).messages({
         'string.empty': 'Loi message is required.',
@@ -29,9 +29,10 @@ export const createLoiType = async (req, res) => {
 
     try {
         const newLoiType = await loiTypeService.createLoiTypeService({ loiMsg, createdBy, modifiedBy });
+        const convertedLoiTypes = convertKeysToSnakeCase(newLoiType);
         res.status(201).json({
             code: 'Created',
-            data: newLoiType,
+            data: convertedLoiTypes._doc
         });
     } catch (err) {
         res.status(500).json({
@@ -42,12 +43,15 @@ export const createLoiType = async (req, res) => {
     }
 };
 
+
 export const getLoiTypes = async (req, res) => {
     try {
         const loiTypes = await loiTypeService.getLoiTypesService();
+        const convertedLoiTypes = convertKeysToSnakeCase(loiTypes);
         res.status(200).json({
             code: 'Success',
-            data: loiTypes,
+            legth: convertedLoiTypes.length,
+            data: convertedLoiTypes,
         });
     } catch (err) {
         res.status(500).json({

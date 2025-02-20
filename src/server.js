@@ -48,8 +48,6 @@ app.use('/file', FileRoutes);
 app.use("/instruction-types",  InstructionTypeRoutes);
 app.use('/loiType' ,LoiTypeRoutes);
 
-app.use("/instruction-types", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), InstructionTypeRoutes);
-app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), LoiTypeRoutes);
 // Start the server
 // app.use(errorHandler);
 app.all("*",(req, res,next)=>{

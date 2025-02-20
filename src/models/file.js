@@ -30,7 +30,7 @@ const fileSchema = new Schema(
     fileFormat: {
       type: String,
       enum: {
-        values: ["pfd", "word"],
+        values: ["pdf", "word"],
         message: `{VALUE} is not supported.`
        },
       required: true,

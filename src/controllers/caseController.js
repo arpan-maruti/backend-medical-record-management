@@ -1,9 +1,9 @@
 import * as caseService from '../services/caseService.js';
 import Case from '../models/case.js';
 import User from '../models/user.js';
+import convertKeysToSnakeCase from '../utils/snakeCase.js';
 import mongoose from 'mongoose';
 export const addCase = async (req, res) => {
-    console.log("hii");
     try {
         const {
             parentId,
@@ -31,9 +31,8 @@ export const addCase = async (req, res) => {
         }
 
         const createdByUser = await User.findById(createdBy).where('isDeleted').equals(false);
-        console.log(createdByUser+"hh");
         const modifiedByUser = await User.findById(modifiedBy).where('isDeleted').equals(false);
-        console.log(modifiedByUser);
+
         if (!createdByUser || !modifiedByUser) {
             return res.status(400).json({
                 code: "Bad Request",
@@ -69,10 +68,11 @@ export const addCase = async (req, res) => {
             createdBy,
             modifiedBy
         });
+        const updatedCase = convertKeysToSnakeCase(req.body);
         res.status(201).json({
             code: "Created",
             message: "Case created successfully.",
-            data: newCase,
+            data: updatedCase,
         });
     } catch (err) {
         res.status(500).json({
@@ -129,10 +129,11 @@ export const updateCase = async (req, res) => {
 
     try {
         const updatedCase = await caseService.updateCaseService(id, caseData);
+        // const newCase = convertKeysToSnakeCase(updatedCase);
         res.status(200).json({
             code: "Success",
             message: "Case updated successfully.",
-            data: updatedCase,
+            data: updatedCase
         });
     } catch (err) {
         res.status(err.status || 500).json({
@@ -165,10 +166,11 @@ export const getFilesOfCase = async (req, res) => {
     try {
         const { id } = req.params;
         const files = await caseService.getFilesOfCaseService(id);
+        const newFiles = convertKeysToSnakeCase(files);
         res.status(200).json({
             code: "Success",
             message: "Case updated successfully.",
-            data: files,
+            data: newFiles,
         });
     } catch (err) {
         res.status(err.status || 500).json({
@@ -182,13 +184,14 @@ export const getFilesOfCase = async (req, res) => {
 export const getAllCases = async (req, res) => {
     try {
         const { cases, pagination } = await caseService.getAllCasesService(req, res);
-        console.log(cases);
+        const newCases = convertKeysToSnakeCase(cases);
+        const newPagination = convertKeysToSnakeCase(pagination);
         res.status(200).json({
             code: "Success",
             length: cases.length,
             message: "All cases fetched successfully",
-            data: cases,
-            pagination: pagination,
+            data: newCases,
+            pagination: newPagination,
         });
     } catch (err) {
         res.status(500).json({
@@ -203,11 +206,12 @@ export const fetchCasesofUser = async (req, res) => {
     try {
         const {id} = req.params;
         const cases = await caseService.fetchCasesofUserService(id);
+        const newCases = convertKeysToSnakeCase(cases);
         res.status(200).json({
             code: "Success",
             message: "Cases fetched successfully",
-            length : cases.length,
-            data: cases
+            length : newCases.length,
+            data: newCases
         })
     } catch (err) {
         res.status(500).json({

@@ -1,7 +1,7 @@
 import * as instructionTypeService from '../services/instructionTypeService.js';
 import User from '../models/user.js'
 import Joi from "joi";
-
+import convertKeysToSnakeCase from '../utils/snakeCase.js';
 export const createInstructionTypeSchema = Joi.object({
     instructionMsg: Joi.string().required().messages({
         'string.base': 'Instruction message must be a string.',
@@ -35,9 +35,11 @@ export const createInstructionType = async (req, res) => {
             });
         }
         const newInstructionType = await instructionTypeService.createInstructionTypeService({ instructionMsg, loiId, createdBy, modifiedBy });
+        const convertedInstruction = convertKeysToSnakeCase(req.body);
         res.status(201).json({
             code: "Created",
-            data: newInstructionType
+            data: convertedInstruction
+
         })
     } catch (err) {
         res.status(500).json({
@@ -52,10 +54,11 @@ export const getInstructionTypeByLoiId = async (req, res) => {
     try {
         const { id } = req.params;
         const instructions = await instructionTypeService.getInstructionTypeByLoiIdService({ id });
+        const convertedInstruction = convertKeysToSnakeCase(instructions);
         res.status(200).json({
             code: "Ok",
             length: instructions.length,
-            data: instructions
+            data: convertedInstruction
         });
     } catch (err) {
         res.status(500).json({

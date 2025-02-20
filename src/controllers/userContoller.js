@@ -8,6 +8,8 @@ import {
     getAllUsers,
     getUserById,
 } from "../services/userService.js";
+import convertKeysToSnakeCase from '../utils/snakeCase.js'; 
+
 
 // Validation schemas
 const registerSchema = Joi.object({
@@ -45,7 +47,6 @@ export const register = async (req, res) => {
     if (error) {
         return res.status(400).json({ code: "Validation Error", message: error.details[0].message });
     }
-
     const {
         firstName,
         lastName,
@@ -68,7 +69,8 @@ export const register = async (req, res) => {
             createdBy,
             modifiedBy,
         });
-        res.status(201).json({ code: "Created", data: newUser });
+        const updatedUser = convertKeysToSnakeCase(newUser);
+        res.status(201).json({ code: "Created", data: updatedUser });
     } catch (err) {
         res.status(500).json({ code: "Error", message: err.message });
     }
@@ -157,15 +159,23 @@ export const verifyOTPController = async (req, res) => {
 export const getUsers = async (req, res) => {
     try {
         const users = await getAllUsers();
-        res.status(200).json(users);
+        const updatedUser = convertKeysToSnakeCase(users);
+        res.status(200).json({
+            code: "Success",
+            length: updatedUser.length,
+            message: "Users fetched successfully",
+            data : updatedUser
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
+// fix: convertKeysToSnakecase
 export const getUserByIdController = async (req, res) => {
     try {
         const user = await getUserById(req.params.id);
+        // const updatedUser = convertKeysToSnakeCase(user)
         res.status(200).json({
             code: "Success",
             message: "User retrieved successfully.",

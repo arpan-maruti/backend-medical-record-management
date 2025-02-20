@@ -21,12 +21,18 @@ const fileSchema = new Schema(
     },
     fileType: {
       type: String,
-      enum: ["loi", "document"],
+      enum: {
+       values: ["loi", "document"],
+       message: `{VALUE} is not supported.`
+      },
       required: true,
     },
     fileFormat: {
       type: String,
-      enum: ["pdf", "word"],
+      enum: {
+        values: ["pdf", "word"],
+        message: `{VALUE} is not supported.`
+       },
       required: true,
     },
     noOfPages: {

@@ -1,24 +1,27 @@
-// fetch details from database and return no extra validations
-// Create: createEntity(), createUser(), addProduct()
-// Read: getEntity(), findUserById(), fetchAllProducts()
-// Update: updateEntity(), updateUser(), modifyProduct()
-// Delete: deleteEntity(), removeUser(), removeProduct()
-// Other common methods: getEntityById(), findEntityByField(), processPayment()
-
-
 import LoiType from "../models/loiType.js";
+import User from "../models/user.js";
+export const createLoiTypeService = async ({ loiMsg, createdBy, modifiedBy }) => {
+  const newLoiType = new LoiType({
+    loiMsg,
+    createdBy,
+    modifiedBy,
+  });
+  const createdByUser = await User.findOne({ _id: createdBy, isDeleted: false });
+  if (!createdByUser) {
+    throw new Error();
+  }
+  if (modifiedBy) {
+    const modifiedByUser = await User.findOne({ _id: modifiedBy, isDeleted: false });
+    if(!modifiedByUser) {
+      throw new Error();
+  }
+  }
 
-export const createLoiTypeService = async ({
-    loiMsg, createdBy, modifiedBy
-}) => {
-    const newLoiType = new LoiType({
-        loiMsg, createdBy, modifiedBy
-    });
+  await newLoiType.save({ runValidators: true });
 
-    await newLoiType.save();
-    return newLoiType;
-}
+  return newLoiType;
+};
 
-export const getLoiTypesService = async() => {
-    return LoiType.find();
-}
+export const getLoiTypesService = async () => {
+  return LoiType.find();
+};

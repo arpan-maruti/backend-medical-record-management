@@ -13,7 +13,7 @@ const loiTypeSchema = new mongoose.Schema({
   modifiedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: User,
-    required: [true, 'modified_by is required'],
+    default: null
   }
 }, 
 {

@@ -33,9 +33,7 @@ export const getCaseService = async ({ id }) => {
   return Case.findOne({ _id: id, isDeleted: false });
 }
 
-export const getSubCaseService = async ({ id }) => {
-  return Case.find({ parentId: id, isDeleted: false });
-}
+
 
 export const updateCaseService = async (id, caseData) => {
   const {
@@ -98,6 +96,49 @@ export const softDeleteService = async (id, caseData) => {
 export const getFilesOfCaseService = async (id) => {
   const caseDetails = await Case.findOne({ _id: id, isDeleted: false }).populate("files").exec();
   return caseDetails.files;
+}
+
+export const getSubCaseService = async ({ id }) => {
+  try {
+    const subCases = await Case.find({ parentId: id, isDeleted: false })
+      .populate([
+        { path: "parameters", select: "_id instructionId" },
+        { path: "modifiedBy", select: "firstName lastName" }
+      ])
+      .lean(); // Convert to plain JS objects for easier manipulation
+
+    for (let caseItem of subCases) {
+      if (caseItem.parameters && caseItem.parameters.length > 0) {
+        const firstParameterId = caseItem.parameters[0]._id;
+
+        // Check if this parameter exists in the Parameter collection
+        const parameter = await Parameter.findById(firstParameterId).populate({
+          path: "instructionId",
+          select: "instructionMsg",
+        });
+
+        if (parameter && parameter.instructionId) {
+          caseItem.instructionMsg = parameter.instructionId.instructionMsg;
+        } else {
+          caseItem.instructionMsg = null; // No instruction message found
+        }
+      } else {
+        caseItem.instructionMsg = null; // No parameters in the case
+      }
+
+      // Add `uploadedBy` using the `modifiedBy` field
+      if (caseItem.modifiedBy) {
+        caseItem.uploadedBy = `${caseItem.modifiedBy.firstName} ${caseItem.modifiedBy.lastName}`;
+      } else {
+        caseItem.uploadedBy = null; // No modifiedBy user
+      }
+    }
+    console.log(subCases);
+    return subCases;
+  } catch (error) {
+    console.error("Error fetching subcases:", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
 }
 
 export const getAllCasesService = async (req, res) => {

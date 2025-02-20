@@ -1,7 +1,7 @@
 import * as caseService from '../services/caseService.js';
 import Case from '../models/case.js';
 import User from '../models/user.js';
-
+import mongoose from 'mongoose';
 export const addCase = async (req, res) => {
     try {
         const {

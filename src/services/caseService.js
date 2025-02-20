@@ -29,10 +29,6 @@ export const addCaseService = async ({ parentId,
   return newCase;
 }
 
-// export const fetchAllCases = async() => {
-//     return Case.find()
-// }
-
 export const getCaseService = async ({ id }) => {
   return Case.findOne({ _id: id, isDeleted: false });
 }

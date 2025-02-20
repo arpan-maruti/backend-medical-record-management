@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 import File from "../models/file.js";
 import * as caseController from '../controllers/caseController.js';
 const router = express.Router();
-
+import passport from "passport";
+import roleMiddleware from "../middlewares/roleMiddlewares.js";
 
 // Controllers
 const validateCase = (req, res, next) => {
@@ -138,27 +139,27 @@ const getAllCases = async (req, res) => {
 
 // Routes
 // POST: Create a new case
-router.post("/", validateCase, validateParameters, caseController.addCase);
+router.post("/", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']),validateCase, validateParameters, caseController.addCase);
 
 //GET: Get all cases
-router.get("/", caseController.getAllCases);
+router.get("/",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), caseController.getAllCases);
 
 //GET: Get specific case
-router.get("/:id", caseController.getCase);
+router.get("/:id",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), caseController.getCase);
 
 //GET: Get all the subcases of a given case.
-router.get("/:id/subcases", caseController.fetchSubacaseOfCase);
+router.get("/:id/subcases", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']),caseController.fetchSubacaseOfCase);
 
 //Patch: Update case details
 //todo : add other validations
-router.patch("/:id", validateParameters, caseController.updateCase);
+router.patch("/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']),validateParameters, caseController.updateCase);
 
 //PATCH : Soft-delete case
-router.patch("/delete/:id", caseController.softDelete);
+router.patch("/delete/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']),caseController.softDelete);
 
 //GET: Get all the files of particular case
-router.get("/:id/file", caseController.getFilesOfCase);
+router.get("/:id/file",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), caseController.getFilesOfCase);
 
-router.get("/:id/cases", caseController.fetchCasesofUser);
+router.get("/:id/cases",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), caseController.fetchCasesofUser);
 
 export default router;

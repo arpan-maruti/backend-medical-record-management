@@ -1,8 +1,9 @@
 import * as caseService from '../services/caseService.js';
 import Case from '../models/case.js';
 import User from '../models/user.js';
-
+import mongoose from 'mongoose';
 export const addCase = async (req, res) => {
+    console.log("hii");
     try {
         const {
             parentId,
@@ -30,7 +31,9 @@ export const addCase = async (req, res) => {
         }
 
         const createdByUser = await User.findById(createdBy).where('isDeleted').equals(false);
+        console.log(createdByUser+"hh");
         const modifiedByUser = await User.findById(modifiedBy).where('isDeleted').equals(false);
+        console.log(modifiedByUser);
         if (!createdByUser || !modifiedByUser) {
             return res.status(400).json({
                 code: "Bad Request",

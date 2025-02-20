@@ -12,10 +12,9 @@ import CaseRoutes from './routes/caseRoutes.js';
 import FileRoutes from './routes/fileRoutes.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
-
 import roleMiddleware from './middlewares/roleMiddlewares.js';
-    
 import './config/passport.js';
+import {errorHandler} from './middlewares/errorHandler.js'
 const app = express();
 const corsOptions = {
     origin: 'http://localhost:4200', // Your frontend URL
@@ -49,6 +48,10 @@ app.use('/file', FileRoutes);
 app.use("/instruction-types",  InstructionTypeRoutes);
 app.use('/loiType' ,LoiTypeRoutes);
 
+app.use("/instruction-types", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), InstructionTypeRoutes);
+app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), LoiTypeRoutes);
+// Start the server
+// app.use(errorHandler);
 app.all("*",(req, res,next)=>{
     res.status(404).json({
         status:"fail",

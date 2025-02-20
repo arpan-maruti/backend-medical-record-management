@@ -6,6 +6,6 @@ import roleMiddleware from "../middlewares/roleMiddlewares.js";
 router.post("/", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']),instructionTypeContoller.createInstructionType);
 
 // Get instructions for a particular loiId
-router.get("/loi/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']),instructionTypeContoller.getInstructionTypeByLoiIdService);
+router.get("/loi/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']),instructionTypeContoller.getInstructionTypeByLoiId);
 
 export default router;

@@ -1,4 +1,5 @@
 import { createFile } from "../services/fileService.js";
+import convertKeysToSnakeCase from '../utils/snakeCase.js';
 
 export const validateFileFields = (req, res, next) => {
     const errors = [];
@@ -19,7 +20,8 @@ export const validateFileFields = (req, res, next) => {
 export const createFileController = async (req, res) => {
   try {
     const result = await createFile(req);
-    res.status(201).json(result);
+    const newResult = convertKeysToSnakeCase(req.body);
+    res.status(201).json(newResult);
   } catch (error) {
     res.status(error.statusCode || 500).json({
       code: error.code || "Internal Server Error",

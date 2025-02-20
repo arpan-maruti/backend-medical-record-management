@@ -1,50 +1,59 @@
-// GET request: getEntity(), getUser(), getProduct()
-// POST request: createEntity(), addUser(), addProduct()
-// PUT/PATCH request: updateEntity(), updateUser(), modifyProduct()
-// DELETE request: deleteEntity(), removeUser(), deleteProduct()
-
-
 import * as loiTypeService from '../services/loiTypeService.js';
+import Joi from 'joi';
 import User from '../models/user.js';
+
+const createLoiTypeSchema = Joi.object({
+    loiMsg: Joi.string().required().min(1).max(500).messages({
+        'string.empty': 'Loi message is required.',
+        'string.min': 'Loi message should have at least 1 character.',
+        'string.max': 'Loi message should have at most 500 characters.',
+    }),
+    createdBy: Joi.string().required().messages({
+        'string.empty': 'Created by user ID is required.',
+    }),
+    modifiedBy: Joi.string().messages({
+        'string.empty': 'Modified by user ID is required.',
+    }),
+});
+
 export const createLoiType = async (req, res) => {
-    const {loiMsg, createdBy, modifiedBy} = req.body;
-    try {
-        const createdByUser = await User.find({_id: createdBy, isDeleted: false});
-        const modifiedByUser = await User.find({_id: modifiedBy, isDeleted: false});
+    const { loiMsg, createdBy, modifiedBy } = req.body;
+    const { error } = createLoiTypeSchema.validate({ loiMsg, createdBy, modifiedBy });
 
-        if(!createdByUser || !modifiedByUser) {
-            return res.status(400).json({
-                code: "Bad Request",
-                message: "Invalid userId provided in created_by or modified_by.",
-              });
-        }
-
-        const newLoiType = await loiTypeService.createLoiTypeService({loiMsg, createdBy, modifiedBy});
-        res.status(201).json({
-            code: "Created",
-            data: newLoiType,
-          });
-    } catch(err) {
-        res.status(500).json({
-            code: "Internal Error",
-            message: "An error occured while creating loi_type",
-            error: err
-        })
+    if (error) {
+        return res.status(400).json({
+            code: 'Bad Request',
+            message: error.details[0].message,
+        });
     }
-}
+
+    try {
+        const newLoiType = await loiTypeService.createLoiTypeService({ loiMsg, createdBy, modifiedBy });
+        res.status(201).json({
+            code: 'Created',
+            data: newLoiType,
+        });
+    } catch (err) {
+        res.status(500).json({
+            code: 'Internal Error',
+            message: 'An error occurred while creating loiType',
+            error: err.message,
+        });
+    }
+};
 
 export const getLoiTypes = async (req, res) => {
     try {
         const loiTypes = await loiTypeService.getLoiTypesService();
         res.status(200).json({
-            code: "Success",
-            data: loiTypes
-        })
-    } catch(err) {
+            code: 'Success',
+            data: loiTypes,
+        });
+    } catch (err) {
         res.status(500).json({
-            code: "Internal Error",
-            message: "An error occured while creating loi_type",
-            error: err
-        })
+            code: 'Internal Error',
+            message: 'An error occurred while fetching loiTypes',
+            error: err.message,
+        });
     }
-}
+};

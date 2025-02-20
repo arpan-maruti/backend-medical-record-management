@@ -12,7 +12,9 @@ export const createLoiTypeService = async ({ loiMsg, createdBy, modifiedBy }) =>
   }
   if (modifiedBy) {
     const modifiedByUser = await User.findOne({ _id: modifiedBy, isDeleted: false });
-    throw new Error();
+    if(!modifiedByUser) {
+      throw new Error();
+  }
   }
 
   await newLoiType.save({ runValidators: true });

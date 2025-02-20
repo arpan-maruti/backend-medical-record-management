@@ -8,6 +8,6 @@ const router = express.Router();
 router.post("/", instructionTypeContoller.createInstructionType);
 
 // Get instructions for a particular loiId
-router.get("/loi/:id", instructionTypeContoller.getInstructionTypeByLoiIdService);
+router.get("/loi/:id", instructionTypeContoller.getInstructionTypeByLoiId);
 
 export default router;

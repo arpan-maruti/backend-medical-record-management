@@ -28,15 +28,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static('public'));
 
-
-
-// Attach JWT from cookie to Authorization header
-
-
-
-
-
-
 // Initialize Passport
 app.use(passport.initialize());
 
@@ -53,11 +44,10 @@ mongoose.connect(dbUrl)
 
 app.use('/user', UserRoutes);
 app.use('/case', CaseRoutes);
-app.use("/parameters",passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), ParameterRoutes);
+app.use("/parameters", ParameterRoutes);
 app.use('/file', FileRoutes);
-app.use("/instruction-types", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), InstructionTypeRoutes);
-app.use('/loiType' , passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']), LoiTypeRoutes);
-// Start the server
+app.use("/instruction-types",  InstructionTypeRoutes);
+app.use('/loiType' ,LoiTypeRoutes);
 
 app.all("*",(req, res,next)=>{
     res.status(404).json({

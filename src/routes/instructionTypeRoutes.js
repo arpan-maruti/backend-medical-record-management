@@ -1,13 +1,11 @@
 import express from "express";
-import User from "../models/user.js";
-import LoiType from "../models/loiType.js";
-import InstructionType from "../models/instructionType.js";
 import * as instructionTypeContoller from '../controllers/instructionTypeController.js'
 const router = express.Router();
-
-router.post("/", instructionTypeContoller.createInstructionType);
+import passport from "passport";
+import roleMiddleware from "../middlewares/roleMiddlewares.js";
+router.post("/", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']),instructionTypeContoller.createInstructionType);
 
 // Get instructions for a particular loiId
-router.get("/loi/:id", instructionTypeContoller.getInstructionTypeByLoiIdService);
+router.get("/loi/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['user','admin']),instructionTypeContoller.getInstructionTypeByLoiIdService);
 
 export default router;

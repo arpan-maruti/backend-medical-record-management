@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import User from "./user.js";
-import LoiType from "./loiType.js";
+import User from "#models/user.js";
+import LoiType from "#models/loiType.js";
 
 const instructionTypeSchema = new mongoose.Schema(
   {

@@ -7,8 +7,8 @@ import {
     verifyUserOTP,
     getAllUsers,
     getUserById,
-} from "../services/userService.js";
-import convertKeysToSnakeCase from '../utils/snakeCase.js'; 
+} from "#services/userService.js";
+import convertKeysToSnakeCase from '#utils/snakeCase.js'; 
 
 
 // Validation schemas

@@ -1,5 +1,5 @@
-import File from "../models/file.js";
-import User from "../models/user.js";
+import File from "#models/file.js";
+import User from "#models/user.js";
 // Function for file creation
 export const createFile = async (req) => {
   const {

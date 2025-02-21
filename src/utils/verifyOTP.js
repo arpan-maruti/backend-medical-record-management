@@ -1,8 +1,5 @@
 import twilio from 'twilio';
-import dotenv from 'dotenv';
 
-// Load environment variables
-dotenv.config({ path: '../../.env' });
 
 // Twilio Account SID and Auth Token
 const accountSid = process.env.TWILIO_SID; // Your Twilio Account SID

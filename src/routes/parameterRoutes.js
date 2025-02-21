@@ -1,7 +1,7 @@
 import express from "express";
-import * as parameterContoller from '../controllers/parameterController.js';
+import * as parameterContoller from '#controllers/parameterController.js';
 import passport from "passport";
-import roleMiddleware from "../middlewares/roleMiddlewares.js";
+import roleMiddleware from "#middlewares/roleMiddlewares.js";
 const router = express.Router();
 
 //POST: Add new Parameter

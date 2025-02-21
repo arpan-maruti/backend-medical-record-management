@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import User from "./user.js";
-import Parameter from "./parameter.js";
-import File from "./file.js";
+import User from "#models/user.js";
+import Parameter from "#models/parameter.js";
+import File from "#models/file.js";
 const caseSchema = new mongoose.Schema(
   {
     parentId: {

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from './user.js';
+import User from '#models/user.js';
 const loiTypeSchema = new mongoose.Schema({
   loiMsg: {
     type: String,

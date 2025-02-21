@@ -1,7 +1,6 @@
-import * as instructionTypeService from '../services/instructionTypeService.js';
-import User from '../models/user.js'
+import * as instructionTypeService from '#services/instructionTypeService.js';
 import Joi from "joi";
-import convertKeysToSnakeCase from '../utils/snakeCase.js';
+import convertKeysToSnakeCase from '#utils/snakeCase.js';
 export const createInstructionTypeSchema = Joi.object({
     instructionMsg: Joi.string().required().messages({
         'string.base': 'Instruction message must be a string.',

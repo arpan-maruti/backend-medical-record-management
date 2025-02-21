@@ -1,5 +1,5 @@
-import LoiType from "../models/loiType.js";
-import User from "../models/user.js";
+import LoiType from "#models/loiType.js";
+import User from "#models/user.js";
 export const createLoiTypeService = async ({ loiMsg, createdBy, modifiedBy }) => {
   const newLoiType = new LoiType({
     loiMsg,

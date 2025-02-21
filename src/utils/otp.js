@@ -1,11 +1,6 @@
 import twilio from 'twilio';
-import dotenv from 'dotenv';
-
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
-// Load environment variables
-dotenv.config({ path: '../../.env' });
 
 // Twilio credentials
 const accountSid = process.env.TWILIO_SID;

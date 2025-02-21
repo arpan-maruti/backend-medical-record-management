@@ -1,6 +1,6 @@
-import * as loiTypeService from '../services/loiTypeService.js';
+import * as loiTypeService from '#services/loiTypeService.js';
 import Joi from 'joi';
-import convertKeysToSnakeCase from '../utils/snakeCase.js';
+import convertKeysToSnakeCase from '#utils/snakeCase.js';
 const createLoiTypeSchema = Joi.object({
     loiMsg: Joi.string().required().min(1).max(500).messages({
         'string.empty': 'Loi message is required.',

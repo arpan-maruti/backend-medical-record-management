@@ -1,8 +1,7 @@
-import * as parameterService from '../services/parameterService.js';
-import User from '../models/user.js';
-import InstructionType from '../models/instructionType.js';
-import Parameter from '../models/parameter.js';
-import convertKeysToSnakeCase from '../utils/snakeCase.js';
+import * as parameterService from '#services/parameterService.js';
+import User from '#models/user.js';
+import InstructionType from '#models/instructionType.js';
+import convertKeysToSnakeCase from '#utils/snakeCase.js';
 
 export const addInstruction = async (req, res) => {
     try {

@@ -5,8 +5,8 @@
 // Delete: deleteEntity(), removeUser(), removeProduct()
 // Other common methods: getEntityById(), findEntityByField(), processPayment()
 
-import Parameter from "../models/parameter.js";
-import InstructionType from "../models/instructionType.js";
+import Parameter from "#models/parameter.js";
+import InstructionType from "#models/instructionType.js";
 export const addParameterService = async({
     instructionId, parameterMsg, significanceLevel, createdBy, modifiedBy
 }) => {

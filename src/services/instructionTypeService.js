@@ -1,6 +1,6 @@
-import InstructionType from "../models/instructionType.js";
-import User from "../models/user.js";
-import LoiType from "../models/loiType.js";
+import InstructionType from "#models/instructionType.js";
+import User from "#models/user.js";
+import LoiType from "#models/loiType.js";
 export const createInstructionTypeService = async ({ instructionMsg, loiId, createdBy, modifiedBy }) => {
     const newInstructionType = new InstructionType({ instructionMsg, loiId, createdBy, modifiedBy });
     const createdByUser = await User.findOne({ _id: createdBy, isDeleted: false });

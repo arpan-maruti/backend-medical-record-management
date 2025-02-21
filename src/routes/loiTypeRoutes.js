@@ -1,8 +1,8 @@
 import express from "express";
-import * as loiTypeController from '../controllers/loiTypeContoller.js'
+import * as loiTypeController from '#controllers/loiTypeContoller.js'
 const router = express.Router();
 import passport from "passport";
-import roleMiddleware from "../middlewares/roleMiddlewares.js";
+import roleMiddleware from "#middlewares/roleMiddlewares.js";
 
 router.post("/",  passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']), loiTypeController.createLoiType);
 

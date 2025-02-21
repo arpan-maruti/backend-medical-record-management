@@ -1,6 +1,5 @@
-import Case from "../models/case.js";
-import Parameter from "../models/parameter.js";
-import User from "../models/user.js";
+import Case from "#models/case.js";
+import Parameter from "#models/parameter.js";
 export const addCaseService = async ({ parentId,
   clientName,
   refNumber,
@@ -161,40 +160,19 @@ export const getAllCasesService = async (req, res) => {
 
   // Fetch cases with parameters and modifiedBy populated
   const cases = await Case.find({ parentId: null, isDeleted: false, ...findBy })
-    .sort(sortBy)
-    .limit(limit)
-    .skip(skip)
-    .populate("parameters", "_id instructionId") // Populate the `parameters` field to get the instructionId
-    .populate("modifiedBy", "firstName lastName") // Populate `modifiedBy` to get user's first and last name
-    .lean(); // Convert to plain JS objects for easier manipulation
-
-  // Iterate over cases to add `instructionMsg` and `uploadedBy`
-  for (let caseItem of cases) {
-    if (caseItem.parameters && caseItem.parameters.length > 0) {
-      const firstParameterId = caseItem.parameters[0]._id;
-
-      // Check if this parameter exists in the Parameter collection
-      const parameter = await Parameter.findById(firstParameterId).populate({
-        path: "instructionId",
-        select: "instructionMsg",
-      });
-
-      if (parameter && parameter.instructionId) {
-        caseItem.instructionMsg = parameter.instructionId.instructionMsg;
-      } else {
-        caseItem.instructionMsg = null; // No instruction message found
-      }
-    } else {
-      caseItem.instructionMsg = null; // No parameters in the case
-    }
-
-    // Add `uploadedBy` using the `modifiedBy` field
-    if (caseItem.modifiedBy) {
-      caseItem.uploadedBy = `${caseItem.modifiedBy.firstName} ${caseItem.modifiedBy.lastName}`;
-    } else {
-      caseItem.uploadedBy = null; // No modifiedBy user
-    }
-  }
+  .sort(sortBy)
+  .limit(limit)
+  .skip(skip)
+  .populate({
+    path: 'parameters',
+    populate: {
+      path: 'instructionId',
+      select: 'instructionMsg'
+    } 
+  }) 
+  .populate("modifiedBy", "firstName lastName")  
+  
+  
 
   const pagination = {
     totalItems: totalCases,

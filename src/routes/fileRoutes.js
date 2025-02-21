@@ -1,9 +1,9 @@
 import express from "express";
 import multer from 'multer';
 import path from 'path';
-import { createFileController } from "../controllers/fileController.js";
+import { createFileController } from "#controllers/fileController.js";
 import passport from "passport";
-import roleMiddleware from "../middlewares/roleMiddlewares.js";
+import roleMiddleware from "#middlewares/roleMiddlewares.js";
 const router = express.Router();
 
 const storage = multer.diskStorage({

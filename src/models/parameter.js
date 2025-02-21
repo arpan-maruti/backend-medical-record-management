@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import User from "./user.js";
-import InstructionType from "./instructionType.js";
+import User from "#models/user.js";
+import InstructionType from "#models/instructionType.js";
 
 const parameterSchema = new mongoose.Schema(
   {

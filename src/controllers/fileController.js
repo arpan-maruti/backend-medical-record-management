@@ -1,5 +1,5 @@
-import { createFile } from "../services/fileService.js";
-import convertKeysToSnakeCase from '../utils/snakeCase.js';
+import { createFile } from "#services/fileService.js";
+import convertKeysToSnakeCase from '#utils/snakeCase.js';
 
 export const validateFileFields = (req, res, next) => {
     const errors = [];

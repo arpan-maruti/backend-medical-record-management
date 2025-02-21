@@ -10,8 +10,8 @@ import {
   getUserByIdController, 
   // updateUserController, 
   // deleteUserController 
-} from "../controllers/userContoller.js";
-import roleMiddleware from '../middlewares/roleMiddlewares.js';
+} from "#controllers/userContoller.js";
+import roleMiddleware from '#middlewares/roleMiddlewares.js';
 import passport from 'passport';
 
 const router = express.Router();

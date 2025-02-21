@@ -1,7 +1,7 @@
 import Joi from "joi";
 // errorHandler.js
 
-export const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res) => {
     if (err instanceof Joi.ValidationError) {
         return res.status(400).json({
             code: 'Bad Request',

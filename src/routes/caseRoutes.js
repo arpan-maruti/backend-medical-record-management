@@ -1,13 +1,13 @@
 import express from "express";
-import Case from "../models/case.js"; // Import the Case model
-import User from "../models/user.js"; // Import the User model (to validate userId)
-import Parameter from "../models/parameter.js"; // Import the Parameter model (for parameter validation)
+import Case from "#models/case.js"; // Import the Case model
+
+import Parameter from "#models/parameter.js"; // Import the Parameter model (for parameter validation)
 import mongoose from "mongoose";
-import File from "../models/file.js";
-import * as caseController from '../controllers/caseController.js';
+
+import * as caseController from '#controllers/caseController.js';
 const router = express.Router();
 import passport from "passport";
-import roleMiddleware from "../middlewares/roleMiddlewares.js";
+import roleMiddleware from "#middlewares/roleMiddlewares.js";
 
 // Controllers
 const validateCase = (req, res, next) => {

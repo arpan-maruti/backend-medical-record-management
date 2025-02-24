@@ -1,6 +1,8 @@
 import * as loiTypeService from '#services/loiTypeService.js';
 import Joi from 'joi';
 import convertKeysToSnakeCase from '#utils/snakeCase.js';
+import { sendSuccess, sendError } from '#utils/responseHelper.js';
+
 const createLoiTypeSchema = Joi.object({
     loiMsg: Joi.string().required().min(1).max(500).messages({
         'string.empty': 'Loi message is required.',
@@ -18,23 +20,21 @@ const createLoiTypeSchema = Joi.object({
 export const createLoiType = async (req, res) => {
     const { loiMsg, createdBy, modifiedBy } = req.body;
     const { error } = createLoiTypeSchema.validate({ loiMsg, createdBy, modifiedBy });
-
     if (error) {
-        return res.status(400).json({
+        return sendError(res, 400, {
             code: 'Bad Request',
             message: error.details[0].message,
         });
     }
-
     try {
         const newLoiType = await loiTypeService.createLoiTypeService({ loiMsg, createdBy, modifiedBy });
         const convertedLoiTypes = convertKeysToSnakeCase(req.body);
-        res.status(201).json({
+        return sendSuccess(res, 201, {
             code: 'Created',
             data: convertedLoiTypes
         });
     } catch (err) {
-        res.status(500).json({
+        return sendError(res, 500, {
             code: 'Internal Error',
             message: 'An error occurred while creating loiType',
             error: err.message,
@@ -42,18 +42,17 @@ export const createLoiType = async (req, res) => {
     }
 };
 
-
 export const getLoiTypes = async (req, res) => {
     try {
         const loiTypes = await loiTypeService.getLoiTypesService();
         const convertedLoiTypes = convertKeysToSnakeCase(loiTypes);
-        res.status(200).json({
+        return sendSuccess(res, 200, {
             code: 'Success',
-            legth: convertedLoiTypes.length,
+            length: convertedLoiTypes.length,
             data: convertedLoiTypes,
         });
     } catch (err) {
-        res.status(500).json({
+        return sendError(res, 500, {
             code: 'Internal Error',
             message: 'An error occurred while fetching loiTypes',
             error: err.message,

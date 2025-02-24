@@ -1,4 +1,3 @@
-```md
 # Backend Medical Record Management
 
 This project is a backend API for managing medical records. It is built using Node.js, Express, and MongoDB (via Mongoose) and implements user authentication with JWT and role-based access control.
@@ -20,20 +19,20 @@ backend-medical-record-management/
 ├── node_modules/
 ├── src/
 │   ├── config/
-│   │   └── [passport.js](http://_vscodecontentref_/1)        # Passport JWT configuration
+│   │   └── passport.js        # Passport JWT configuration
 │   ├── controllers/           # Express route controllers (User, Case, File, etc.)
 │   ├── middlewares/           # Custom middleware (role check, etc.)
 │   ├── models/                # Mongoose models (User, Case, Parameter, etc.)
 │   ├── routes/                # API route definitions organized by resource
 │   ├── services/              # Business logic for each resource
 │   ├── utils/                 # Utility functions (error handling, snake_case conversion, OTP, mailer)
-│   ├── [app.js](http://_vscodecontentref_/2)                 # Express app configuration (middleware & routes)
-│   └── [server.js](http://_vscodecontentref_/3)              # Server bootstrap and MongoDB connection
+│   ├── app.js                 # Express app configuration (middleware & routes)
+│   └── server.js              # Server bootstrap and MongoDB connection
 │
 ├── .env                       # Environment variables
 ├── .gitignore                 # Files and directories to ignore by Git
-├── [package.json](http://_vscodecontentref_/4)               # Project dependencies and scripts
-└── [README.md](http://_vscodecontentref_/5)                  # Project documentation (this file)
+├── package.json               # Project dependencies and scripts
+└── README.md                  # Project documentation (this file)
 ```
 
 ## Prerequisites
@@ -56,7 +55,7 @@ backend-medical-record-management/
    npm install
    ```
 
-3. Create a [.env](http://_vscodecontentref_/6) file in the root directory with the following variables:
+3. Create a `.env` file in the root directory with the following variables:
 
    ```env
    PORT=5000
@@ -84,7 +83,7 @@ Use the following command to run the development server (it uses nodemon for aut
 npm run dev
 ```
 
-The server should start on the port specified in your [.env](http://_vscodecontentref_/7) file (default is **5000**).
+The server should start on the port specified in your `.env` file (default is **5000**).
 
 ## API Endpoints
 
@@ -119,7 +118,7 @@ The server should start on the port specified in your [.env](http://_vscodeconte
 
 ## Module Alias
 
-The project uses module aliasing for cleaner import paths. The following alias mappings are defined in your [package.json](http://_vscodecontentref_/8) under the `"imports"` field:
+The project uses module aliasing for cleaner import paths. The following alias mappings are defined in your `package.json` under the `"imports"` field:
 
 - `#middlewares/*` → `./src/middlewares/*`
 - `#routes/*` → `./src/routes/*`
@@ -131,7 +130,7 @@ The project uses module aliasing for cleaner import paths. The following alias m
 
 ## Environment & Deployment
 
-Ensure that all environment variables are set properly in your deployment environment (e.g., on a production server, configure your environment variables instead of using a .env file).
+Ensure that all environment variables are set properly in your deployment environment (e.g., on a production server, configure your environment variables instead of using a `.env` file).
 
 ## Contributing
 
@@ -148,4 +147,4 @@ This project is licensed under the ISC License.
 - [Passport](http://www.passportjs.org/)
 - [Twilio](https://www.twilio.com/)
 - [SendGrid](https://sendgrid.com/)
-```
+

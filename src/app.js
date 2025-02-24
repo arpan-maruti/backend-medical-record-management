@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import '#config/passport.js';
-
 import UserRoutes from '#routes/userRoutes.js';
 import LoiTypeRoutes from '#routes/loiTypeRoutes.js';
 import InstructionTypeRoutes from '#routes/instructionTypeRoutes.js';

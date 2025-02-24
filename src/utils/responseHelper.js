@@ -1,4 +1,5 @@
 export const sendSuccess = (res, statusCode = 200, { code, message, data, ...extra } = {}) => {
+  console.log(data);
   const response = { success: true };
   if (code) response.code = code;
   if (message) response.message = message;

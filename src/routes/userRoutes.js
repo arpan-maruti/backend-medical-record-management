@@ -7,7 +7,8 @@ import {
   sendOTPController, 
   verifyOTPController, 
   getUsers, 
-  getUserByIdController, 
+  getUserByIdController,
+  logout 
   // updateUserController, 
   // deleteUserController 
 } from "#controllers/userContoller.js";
@@ -24,6 +25,7 @@ router.post("/login", login);
 router.post("/set-password",setPasswordController);
 router.post("/send-otp",sendOTPController);
 router.post("/verify-otp", verifyOTPController);
+router.post("/logout", passport.authenticate('jwt', { session: false }), logout); // <-- New logout endpoint
 // router.patch("/:id", getAllUsers, updateUserController);
 // router.patch("/delete/:id", getAllUsers, deleteUserController);
 

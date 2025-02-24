@@ -181,6 +181,30 @@ export const getUserByIdController = async (req, res) => {
     }
 };
 
+// Add this at the end of the file along with existing exports
+export const logout = async (req, res) => {
+    console.log("hhh");
+    try {
+      // Expire the JWT cookie immediately by setting its expiration date to a past date
+      res.cookie('jwt', '', { 
+        httpOnly: true, 
+        secure: false, // update to true if using https 
+        expires: new Date(0), 
+        sameSite: 'strict'
+      });
+      
+      return sendSuccess(res, 200, {
+        code: "Success",
+        message: "Logged out successfully. JWT token expired."
+      });
+    } catch (err) {
+      return sendError(res, 500, {
+        code: "Internal Error",
+        message: err.message
+      });
+    }
+};
+
 // Uncomment and update the lines below for additional controllers as needed:
 
 // export const updateUserController = async (req, res) => {

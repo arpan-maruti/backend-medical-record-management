@@ -68,31 +68,31 @@ export const createFile = async (req) => {
 };
 
 // Function for deleting a file
-// export const deleteFile = async (fileId) => {
-//   // Step 1: Delete the file from the File collection
-//   const deletedFile = await File.findByIdAndDelete(fileId);
-//   if (!deletedFile) {
-//     throw {
-//       statusCode: 404,
-//       message: "File not found",
-//     };
-//   }
+export const deleteFile = async (fileId) => {
+  // Step 1: Delete the file from the File collection
+  const deletedFile = await File.findByIdAndDelete(fileId);
+  if (!deletedFile) {
+    throw {
+      statusCode: 404,
+      message: "File not found",
+    };
+  }
 
-//   // Step 2: Remove the file reference from the Case collection
-//   const updatedCase = await Case.updateMany(
-//     { file: fileId },
-//     { $pull: { file: fileId } }
-//   );
+  // Step 2: Remove the file reference from the Case collection
+  const updatedCase = await Case.updateMany(
+    { file: fileId },
+    { $pull: { file: fileId } }
+  );
 
-//   // Check if the case was updated
-//   if (updatedCase.nModified === 0) {
-//     throw {
-//       statusCode: 404,
-//       message: "Case not found with this file reference",
-//     };
-//   }
+  // Check if the case was updated
+  if (updatedCase.nModified === 0) {
+    throw {
+      statusCode: 404,
+      message: "Case not found with this file reference",
+    };
+  }
 
-//   return {
-//     message: "File deleted and reference removed from case",
-//   };
-// };
+  return {
+    message: "File deleted and reference removed from case",
+  };
+};

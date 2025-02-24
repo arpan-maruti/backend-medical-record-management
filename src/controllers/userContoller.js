@@ -8,8 +8,8 @@ import {
     getAllUsers,
     getUserById,
 } from "#services/userService.js";
-import convertKeysToSnakeCase from '#utils/snakeCase.js'; 
-
+import convertKeysToSnakeCase from '#utils/snakeCase.js';
+import { sendSuccess, sendError } from '#utils/responseHelper.js'; 
 
 // Validation schemas
 const registerSchema = Joi.object({
@@ -45,7 +45,7 @@ const verifyOtpSchema = Joi.object({
 export const register = async (req, res) => {
     const { error } = registerSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ code: "Validation Error", message: error.details[0].message });
+        return sendError(res, 400, { code: "Validation Error", message: error.details[0].message });
     }
     const {
         firstName,
@@ -70,72 +70,70 @@ export const register = async (req, res) => {
             modifiedBy,
         });
         const updatedUser = convertKeysToSnakeCase(newUser);
-        res.status(201).json({ code: "Created", data: updatedUser });
+        return sendSuccess(res, 201, { code: "Created", data: updatedUser });
     } catch (err) {
-        res.status(500).json({ code: "Error", message: err.message });
+        return sendError(res, 500, { code: "Error", message: err.message });
     }
 };
 
 export const login = async (req, res) => {
     const { error } = loginSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ success: false, message: error.details[0].message });
+        return sendError(res, 400, { code: "Validation Error", message: error.details[0].message });
     }
 
     const { email, password } = req.body;
 
     try {
         const user = await loginUser(email, password);
-        res.json({
-            success: true,
+        return sendSuccess(res, 200, {
             message: "Login successful",
-            phone: user.phoneNumber,
+            data: { phone: user.phoneNumber },
         });
-    } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+    } catch (err) {
+        return sendError(res, 400, { code: "Error", message: err.message });
     }
 };
 
 export const setPasswordController = async (req, res) => {
     const { error } = setPasswordSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ code: "Validation Error", message: error.details[0].message });
+        return sendError(res, 400, { code: "Validation Error", message: error.details[0].message });
     }
 
     const { token, password } = req.body;
 
     try {
         await setPassword(token, password);
-        res.json({ code: "Success", message: "Password set successfully." });
+        return sendSuccess(res, 200, { code: "Success", message: "Password set successfully." });
     } catch (err) {
-        res.status(400).json({ code: "Invalid Token", message: err.message });
+        return sendError(res, 400, { code: "Invalid Token", message: err.message });
     }
 };
 
 export const sendOTPController = async (req, res) => {
     const { error } = otpSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ success: false, message: error.details[0].message });
+        return sendError(res, 400, { code: "Validation Error", message: error.details[0].message });
     }
 
     const { email } = req.body;
 
     try {
         const verificationSid = await sendOTPToUser(email);
-        res.status(200).json({
-            success: true,
+        return sendSuccess(res, 200, {
             message: "OTP sent successfully.",
-            verificationSid,
+            data: { verificationSid },
         });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+    } catch (err) {
+        return sendError(res, 500, { code: "Error", message: err.message });
     }
 };
 
 export const verifyOTPController = async (req, res) => {
     const { error } = verifyOtpSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ success: false, message: error.details[0].message });
+        return sendError(res, 400, { code: "Validation Error", message: error.details[0].message });
     }
 
     const { email, otp } = req.body;
@@ -146,64 +144,63 @@ export const verifyOTPController = async (req, res) => {
             httpOnly: false,
             secure: false,
             sameSite: 'strict',
-           
         });
-        // this.cookieService.set('abc', '123');
-
-        res.status(200).json({ success: true, message: "OTP verification successful.", token });
-    } catch (error) {
-        res.status(400).json({ success: false, error: error.message });
+        return sendSuccess(res, 200, { 
+            message: "OTP verification successful.",
+            data: { token }
+        });
+    } catch (err) {
+        return sendError(res, 400, { code: "Error", message: err.message });
     }
 };
 
 export const getUsers = async (req, res) => {
     try {
         const users = await getAllUsers();
-        const updatedUser = convertKeysToSnakeCase(users);
-        res.status(200).json({
+        const updatedUsers = convertKeysToSnakeCase(users);
+        return sendSuccess(res, 200, {
             code: "Success",
-            length: updatedUser.length,
             message: "Users fetched successfully",
-            data : updatedUser
+            data: { users: updatedUsers, length: updatedUsers.length },
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return sendError(res, 500, { code: "Error", message: err.message });
     }
 };
 
-// fix: convertKeysToSnakecase
 export const getUserByIdController = async (req, res) => {
     try {
         const user = await getUserById(req.params.id);
-        // const updatedUser = convertKeysToSnakeCase(user)
-        res.status(200).json({
+        return sendSuccess(res, 200, {
             code: "Success",
             message: "User retrieved successfully.",
-            data: user,
+            data:  user ,
         });
     } catch (err) {
-        res.status(404).json({ code: "Not Found", message: err.message });
+        return sendError(res, 404, { code: "Not Found", message: err.message });
     }
 };
+
+// Uncomment and update the lines below for additional controllers as needed:
 
 // export const updateUserController = async (req, res) => {
 //     try {
 //         const updatedUser = await updateUser(req.user, req.body);
-//         res.status(200).json({
+//         return sendSuccess(res, 200, {
 //             code: "Success",
 //             message: "User updated successfully.",
 //             data: updatedUser,
 //         });
 //     } catch (err) {
-//         res.status(500).json({ code: "Internal Server Error", message: err.message });
+//         return sendError(res, 500, { code: "Internal Server Error", message: err.message });
 //     }
 // };
 
 // export const deleteUserController = async (req, res) => {
 //     try {
 //         await deleteUser(req.user, req.body.modifiedBy);
-//         res.status(204).json({ code: "Success", message: "User deleted successfully." });
+//         return sendSuccess(res, 204, { code: "Success", message: "User deleted successfully." });
 //     } catch (err) {
-//         res.status(500).json({ code: "Internal Server Error", message: err.message });
+//         return sendError(res, 500, { code: "Internal Server Error", message: err.message });
 //     }
 // };

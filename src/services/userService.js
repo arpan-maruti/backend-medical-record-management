@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendPasswordSetupEmail } from "#utils/mailer.js";
 import { sendOTP, verifyOTP } from '#utils/otp.js';
-
+import Case from "#models/case.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async({
@@ -128,6 +128,68 @@ export const getUserById = async(id) => {
         throw new Error('User not found');
     }
     return user;
+};
+
+
+export const fetchCasesofUserService = async (req, res) => {
+    // Extract token from the Authorization header ("Bearer <token>")
+    const authHeader = req.headers.authorization;
+    console.log("authHeader"+authHeader);
+    if (!authHeader) {
+        throw new Error("Authorization header missing");
+    }
+    const token = authHeader.split(" ")[1];
+    console.log("token"+token);
+    let decoded;
+    try {
+        decoded = jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+        throw new Error("Invalid token");
+    }
+    // Use id from the decoded payload
+    const id = decoded.id;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    let sortBy = req.query.sort || "-createdAt";
+    const skip = (page - 1) * limit;
+  
+    const totalCases = await Case.countDocuments({ createdBy: id, isDeleted: false });
+    const totalPages = Math.ceil(totalCases / limit);
+  
+    if (skip >= totalCases) {
+      throw new Error("This page does not exist");
+    }
+  
+    if (sortBy) {
+      sortBy = sortBy.split(",").join(" ");
+    }
+  
+    const cases = await Case.find({ createdBy: id, isDeleted: false })
+      .sort(sortBy)
+      .limit(limit)
+      .skip(skip)
+      .populate({
+        path: 'parameters',
+        populate: {
+          path: 'instructionId',
+          select: 'instructionMsg loiId',
+          populate: {
+            path: 'loiId',
+            select: 'loiMsg'
+          }
+        }
+      })
+      .populate("modifiedBy", "firstName lastName");
+  
+    const pagination = {
+      totalItems: totalCases,
+      totalPages: totalPages,
+      currentPage: page,
+      itemsPerPage: limit,
+    };
+  
+    return { cases, pagination };
 };
 
 

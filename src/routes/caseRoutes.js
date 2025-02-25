@@ -65,12 +65,6 @@ router.get(
   caseController.getFilesOfCase
 );
 
-// GET: Get all cases of user
-router.get(
-  "/:id/cases",
-  passport.authenticate('jwt', { session: false }),
-  roleMiddleware(['user', 'admin']),
-  caseController.fetchCasesofUser
-);
+
 
 export default router;

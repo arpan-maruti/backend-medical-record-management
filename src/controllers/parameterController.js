@@ -39,7 +39,7 @@ export const addInstruction = async (req, res) => {
         return sendError(res, 500, {
             code: "Internal Error",
             message: "An error occured while creating parameter",
-            error: err
+            error: err.message
         });
     }
 };

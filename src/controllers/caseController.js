@@ -108,11 +108,12 @@ export const fetchSubacaseOfCase = async (req, res) => {
     try {
         const { id } = req.params;
         const subcases = await caseService.getSubCaseService({ id });
+        const newCases = convertKeysToSnakeCase(subcases);
         return sendSuccess(res, 200, {
             code: "Success",
             length: subcases.length,
             message: "All subcases fetched successfully.",
-            data: subcases,
+            data: newCases,
         });
     } catch (err) {
         return sendError(res, 500, {

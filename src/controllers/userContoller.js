@@ -7,9 +7,11 @@ import {
     verifyUserOTP,
     getAllUsers,
     getUserById,
+    fetchCasesofUserService
 } from "#services/userService.js";
 import convertKeysToSnakeCase from '#utils/snakeCase.js';
 import { sendSuccess, sendError } from '#utils/responseHelper.js'; 
+
 
 // Validation schemas
 const registerSchema = Joi.object({
@@ -202,6 +204,29 @@ export const logout = async (req, res) => {
         code: "Internal Error",
         message: err.message
       });
+    }
+};
+
+export const fetchCasesofUser = async (req, res) => {
+    try {
+        console.log("hello");
+        const { cases, pagination } = await fetchCasesofUserService(req, res);
+        const newCases = convertKeysToSnakeCase(cases);
+        const newPagination = convertKeysToSnakeCase(pagination);
+        console.log(newCases);
+        return sendSuccess(res, 200, {
+            code: "Success",
+            length: cases.length,
+            message: "All cases fetched successfully",
+            data: newCases,
+            pagination: newPagination,
+        });
+    } catch (err) {
+        return sendError(res, 500, {
+            code: "Internal Server Error",
+            message: "An error occurred while fetching the cases.",
+            error: err.message,
+        });
     }
 };
 

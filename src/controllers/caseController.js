@@ -202,22 +202,3 @@ export const getAllCases = async (req, res) => {
     }
 };
 
-export const fetchCasesofUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const cases = await caseService.fetchCasesofUserService(id);
-        const newCases = convertKeysToSnakeCase(cases);
-        return sendSuccess(res, 200, {
-            code: "Success",
-            message: "Cases fetched successfully",
-            length: newCases.length,
-            data: newCases,
-        });
-    } catch (err) {
-        return sendError(res, 500, {
-            code: "Internal Server Error",
-            message: "An error occurred while fetching the cases.",
-            error: err.message,
-        });
-    }
-};

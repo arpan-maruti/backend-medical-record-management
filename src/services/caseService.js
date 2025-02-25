@@ -1,5 +1,5 @@
 import Case from "#models/case.js";
-import Parameter from "#models/parameter.js";
+// import Parameter from "#models/parameter.js";
 export const addCaseService = async ({ parentId,
   clientName,
   refNumber,
@@ -172,8 +172,5 @@ export const getAllCasesService = async (req, res) => {
 
 
 
-export const fetchCasesofUserService = async (id) => {
-  return Case.find({ createdBy: id, isDeleted: false });
-}
     // // Filtering
     // if(req.query.caseStatus) query = query.find({caseStatus: req.query.caseStatus});

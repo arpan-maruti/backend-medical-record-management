@@ -15,7 +15,7 @@ import FileRoutes from '#routes/fileRoutes.js';
 const app = express();
 
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN, // Your frontend URL
+    origin: process.env.CORS_ORIGIN_2, // Your frontend URL
     credentials: true, // Allow cookies to be sent
 };
 

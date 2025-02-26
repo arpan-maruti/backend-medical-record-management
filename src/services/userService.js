@@ -184,7 +184,7 @@ export const fetchCasesofUserService = async (req, res) => {
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
     
-    let searchCriteria = { createdBy: id, isDeleted: false };
+    let searchCriteria = { parentId:null, createdBy: id, isDeleted: false };
     if (req.query.clientName) {
         searchCriteria.clientName = { $regex: req.query.clientName, $options: 'i' };
     }

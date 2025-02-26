@@ -11,25 +11,32 @@ export const addCaseService = async ({ parentId,
   isDeleted,
   createdBy,
   modifiedBy }) => {
-  const newCase = new Case({
-    parentId,
-    clientName,
-    refNumber,
-    dateOfBreach,
-    caseStatus,
-    parameters,
-    files,
-    isLoi,
-    isDeleted,
-    createdBy,
-    modifiedBy
-  });
-  await newCase.save();
-  return newCase;
+    try {
+      const newCase = new Case({
+        parentId,
+        clientName,
+        refNumber,
+        dateOfBreach,
+        caseStatus,
+        parameters,
+        files,
+        isLoi,
+        isDeleted,
+        createdBy,
+        modifiedBy
+      });
+      return await newCase.save({runValidators: true});
+    } catch(err) {
+      throw new Error(err.message)
+    }
 }
 
 export const getCaseService = async ({ id }) => {
-  return Case.findOne({ _id: id, isDeleted: false });
+  try {
+    return Case.findOne({ _id: id, isDeleted: false });
+  } catch(err) {
+    throw new Error(err.message)
+  }
 }
 
 
@@ -72,29 +79,40 @@ export const updateCaseService = async (id, caseData) => {
     }
     updates.updatedAt = new Date();
 
-    await Case.updateOne({ _id: id, isDeleted: false }, { $set: updates });
+    await Case.updateOne({ _id: id, isDeleted: false }, { $set: updates }, {runValidators: true});
 
     const updatedCase = await Case.findOne({ _id: id });
     return updatedCase;
 
   } catch (err) {
-    throw err; // Throw the error to be handled by the controller
+    throw new Error(err.message);
   }
 };
 
+
 export const softDeleteService = async (id, caseData) => {
-  const caseDetails = await Case.find({ _id: id, isDeleted: false });
-  let updates = {};
-  if ('modifiedBy' in caseData) updates.modifiedBy = caseData.modifiedBy;
-  updates.isDeleted = true;
-  await Case.updateOne({ _id: id, isDeleted: false }, { $set: updates });
-  const updatedCase = await Case.findOne({ _id: id });
-  return updatedCase;
+  try {
+    const caseDetails = await Case.findOne({ _id: id, isDeleted: false });
+    if(!caseDetails) {
+      throw new Error("Case not found");
+    }
+    let updates = {};
+    if ('modifiedBy' in caseData) updates.modifiedBy = caseData.modifiedBy;
+    updates.isDeleted = true;
+    await Case.updateOne({ _id: id, isDeleted: false }, { $set: updates }, {runValidators: true});
+    return await Case.findOne({ _id: id });
+  } catch (err) {
+    throw new Error(err.message);
+  }
 }
 
 export const getFilesOfCaseService = async (id) => {
+try {
   const caseDetails = await Case.findOne({ _id: id, isDeleted: false }).populate("files").exec();
   return caseDetails.files;
+}catch (err) {
+  throw new Error(err.message);
+}
 }
 
 export const getSubCaseService = async ({ id }) => {
@@ -116,25 +134,26 @@ export const getSubCaseService = async ({ id }) => {
     
     return subCases;
   } catch (error) {
-    console.error("Error fetching subcases:", error);
-    throw error; // Rethrow the error to be handled by the caller
+    throw new Error(err.message);
   }
 }
 
 export const getAllCasesService = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
-  let sortBy = req.query.sort || "-createdAt";
-  const findBy = req.query.caseStatus ? { caseStatus: req.query.caseStatus } : {};
-  const skip = (page - 1) * limit;
+  try {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    let sortBy = req.query.sort || "-createdAt";
+    const findBy = req.query.caseStatus ? { caseStatus: req.query.caseStatus } : {};
+    const skip = (page - 1) * limit;
 
   const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false, ...findBy });
   const totalPages = Math.ceil(totalCases / limit);
-
+  
   if (skip >= totalCases) {
     throw new Error("This page does not exist");
   }
-
+  
   if (sortBy) {
     sortBy = sortBy.split(",").join(" ");
   }
@@ -165,8 +184,11 @@ export const getAllCasesService = async (req, res) => {
     currentPage: page,
     itemsPerPage: limit,
   };
-
+  
   return { cases, pagination };
+} catch (err) {
+  throw new Error(err.message);
+}
 };
 
 

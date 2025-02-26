@@ -15,7 +15,6 @@ export const addCase = async (req, res) => {
             caseStatus,
             parameters,
             files,
-            isLoi,
             isDeleted,
             createdBy,
             modifiedBy,
@@ -65,7 +64,6 @@ export const addCase = async (req, res) => {
             caseStatus,
             parameters,
             files,
-            isLoi,
             isDeleted,
             createdBy,
             modifiedBy

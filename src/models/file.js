@@ -43,7 +43,6 @@ const fileSchema = new Schema(
     filesLabel: {
       type: String,
       default: null,
-      required: true,
     },
     isDeleted: {
       type: Boolean,

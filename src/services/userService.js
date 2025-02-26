@@ -163,8 +163,6 @@ export const getUserById = async(id) => {
 
 export const fetchCasesofUserService = async (req, res) => {
     try {
-
-        // Extract token from the Authorization header ("Bearer <token>")
         const authHeader = req.headers.authorization;
         console.log("authHeader"+authHeader);
         if (!authHeader) {
@@ -186,7 +184,14 @@ export const fetchCasesofUserService = async (req, res) => {
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
     
+    let searchCriteria = { createdBy: id, isDeleted: false };
+    if (req.query.clientName) {
+        searchCriteria.clientName = { $regex: req.query.clientName, $options: 'i' };
+    }
     const totalCases = await Case.countDocuments({ createdBy: id, isDeleted: false });
+    if (totalCases === 0) {
+        return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
+    }
     const totalPages = Math.ceil(totalCases / limit);
     
     if (skip >= totalCases) {
@@ -197,7 +202,7 @@ export const fetchCasesofUserService = async (req, res) => {
         sortBy = sortBy.split(",").join(" ");
     }
     
-    const cases = await Case.find({ createdBy: id, isDeleted: false })
+    const cases = await Case.find(searchCriteria)
     .sort(sortBy)
     .limit(limit)
     .skip(skip)

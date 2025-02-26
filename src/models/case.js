@@ -40,10 +40,6 @@ const caseSchema = new mongoose.Schema(
         default: [],
       },
     ],
-    isLoi: {
-        type: Boolean,
-        default: false
-    },
     isDeleted: {
       type: Boolean,
       default: false,

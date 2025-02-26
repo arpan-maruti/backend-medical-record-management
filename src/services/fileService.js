@@ -96,3 +96,20 @@ export const deleteFile = async (fileId) => {
     message: "File deleted and reference removed from case",
   };
 };
+
+
+export const updateFileLabel = async (fileId, newLabel) => {
+  const updatedFile = await File.findByIdAndUpdate(
+    fileId,
+    { filesLabel: newLabel },
+    { new: true, runValidators: true }
+  );
+  if (!updatedFile) {
+    throw {
+      statusCode: 404,
+      code: "Not Found",
+      message: "File not found",
+    };
+  }
+  return updatedFile;
+};

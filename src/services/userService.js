@@ -16,18 +16,20 @@ export const registerUser = async({
     createdBy = null,
     modifiedBy = null,
 }) => {
-    const newUser = new User({
-        firstName,
-        lastName,
-        email,
-        countryCode,
-        phoneNumber,
+    try {
+
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            countryCode,
+            phoneNumber,
         userRole,
         isDeleted: false,
         createdBy,
         modifiedBy,
     });
-
+    
     await newUser.save();
     const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "30m" });
     await sendPasswordSetupEmail(email, token);
@@ -35,63 +37,83 @@ export const registerUser = async({
     delete updatedUser._id;
     delete updatedUser.password;
     return updatedUser;
+} catch(err) {
+    throw new Error(err.message);
+}
 };
 
 
 export const loginUser = async(email, password) => {
-    const user = await User.findOne({ email });
-    if (!user) {
-        throw new Error('User not found');
-    }
+    try {
 
-    const isMatch = bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        throw new Error('Invalid password');
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        const isMatch = bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            throw new Error('Invalid password');
+        }
+        
+        return user;
+    } catch(err) {
+        throw new Error(err.message);
     }
-
-    return user;
 };
 
 
 export const setPassword = async(token, password) => {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findOne({ email: decoded.email });
+    try {
 
-    if (!user) {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await User.findOne({ email: decoded.email });
+        
+        if (!user) {
         throw new Error('User not found');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
     await user.save();
-
+    
     return user;
+} catch(err) {
+    throw new Error(err.message);
+}
 };
 
 
 export const sendOTPToUser = async(email) => {
-    const user = await User.findOne({ email, isDeleted: false });
-    if (!user) {
-        throw new Error('User not found');
-    }
-
-    const { phoneNumber, countryCode } = user;
-    if (!phoneNumber) {
-        throw new Error('User does not have a phone number');
-    }
-
-    const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-    const verificationSid = await sendOTP(fullPhoneNumber);
-
+    try {
+        
+        const user = await User.findOne({ email, isDeleted: false });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        const { phoneNumber, countryCode } = user;
+        if (!phoneNumber) {
+            throw new Error('User does not have a phone number');
+        }
+        
+        const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+        const verificationSid = await sendOTP(fullPhoneNumber);
+        
     return verificationSid;
+} catch(err) {
+    throw new Error(err.message);
+}
 };
 
 
 export const verifyUserOTP = async(email, otp) => {
-    const user = await User.findOne({ email, isDeleted: false });
-    if (!user) {
-        throw new Error('User not found');
-    }
+    try {
 
+        const user = await User.findOne({ email, isDeleted: false });
+        if (!user) {
+            throw new Error('User not found');
+    }
+    
     const { phoneNumber, countryCode } = user;
 
     if (!phoneNumber) {
@@ -105,37 +127,47 @@ export const verifyUserOTP = async(email, otp) => {
         throw new Error('OTP verification failed');
     }
     const payload = {
-        id: user._id, // User ID
-        role: user.role // User Role (e.g., admin, manager, etc.)
+        id: user._id,
+        role: user.role
     };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-    // Store JWT in a secure cookie
     console.log("token" + token);
-
-
     return token;
+} catch(err) {
+    throw new Error(err.message);
+}
 };
 
 
 export const getAllUsers = async() => {
-    return await User.find({ isDeleted: false }).select('-_id -password');
+    try {
+        return await User.find({ isDeleted: false }).select('-_id -password');
+    } catch(err) {
+        throw new Error(err.message);
+    }
 };
 
 
 export const getUserById = async(id) => {
-    const user = await User.findOne({ _id: id, isDeleted: false }).select('-_id -password');
-    if (!user) {
-        throw new Error('User not found');
+    try {
+        const user = await User.findOne({ _id: id, isDeleted: false }).select('-_id -password');
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    } catch(err) {
+        throw new Error(err.message);
     }
-    return user;
 };
 
 
 export const fetchCasesofUserService = async (req, res) => {
-    // Extract token from the Authorization header ("Bearer <token>")
-    const authHeader = req.headers.authorization;
-    console.log("authHeader"+authHeader);
-    if (!authHeader) {
+    try {
+
+        // Extract token from the Authorization header ("Bearer <token>")
+        const authHeader = req.headers.authorization;
+        console.log("authHeader"+authHeader);
+        if (!authHeader) {
         throw new Error("Authorization header missing");
     }
     const token = authHeader.split(" ")[1];
@@ -148,41 +180,41 @@ export const fetchCasesofUserService = async (req, res) => {
     }
     // Use id from the decoded payload
     const id = decoded.id;
-
+    
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
-  
+    
     const totalCases = await Case.countDocuments({ createdBy: id, isDeleted: false });
     const totalPages = Math.ceil(totalCases / limit);
-  
+    
     if (skip >= totalCases) {
-      throw new Error("This page does not exist");
+        throw new Error("This page does not exist");
     }
   
     if (sortBy) {
-      sortBy = sortBy.split(",").join(" ");
+        sortBy = sortBy.split(",").join(" ");
     }
-  
+    
     const cases = await Case.find({ createdBy: id, isDeleted: false })
-      .sort(sortBy)
-      .limit(limit)
-      .skip(skip)
-      .populate({
+    .sort(sortBy)
+    .limit(limit)
+    .skip(skip)
+    .populate({
         path: 'parameters',
         populate: {
           path: 'instructionId',
           select: 'instructionMsg loiId',
           populate: {
-            path: 'loiId',
-            select: 'loiMsg'
-          }
+              path: 'loiId',
+              select: 'loiMsg'
+            }
         }
       })
       .populate("modifiedBy", "firstName lastName");
   
-    const pagination = {
+      const pagination = {
       totalItems: totalCases,
       totalPages: totalPages,
       currentPage: page,
@@ -190,6 +222,9 @@ export const fetchCasesofUserService = async (req, res) => {
     };
   
     return { cases, pagination };
+} catch(err) {
+    throw new Error(err.message);
+}
 };
 
 

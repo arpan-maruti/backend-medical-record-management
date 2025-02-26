@@ -61,6 +61,4 @@ router.get(
   caseController.getFilesOfCase
 );
 
-
-
 export default router;

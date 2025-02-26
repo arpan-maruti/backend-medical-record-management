@@ -2,7 +2,6 @@ import express from "express";
 import * as caseController from "#controllers/caseController.js";
 import passport from "passport";
 import roleMiddleware from "#middlewares/roleMiddlewares.js";
-import { validateCase, validateParameters } from "#middlewares/caseValidations.js";
 
 const router = express.Router();
 
@@ -11,8 +10,6 @@ router.post(
   "/",
   passport.authenticate('jwt', { session: false }),
   roleMiddleware(['user', 'admin']),
-  validateCase,
-  validateParameters,
   caseController.addCase
 );
 
@@ -45,7 +42,6 @@ router.patch(
   "/:id",
   passport.authenticate('jwt', { session: false }),
   roleMiddleware(['admin']),
-  validateParameters,
   caseController.updateCase
 );
 

@@ -1,4 +1,4 @@
-import { createFile, deleteFile } from "#services/fileService.js";
+import { createFile, deleteFile, updateFileLabel } from "#services/fileService.js";
 import convertKeysToSnakeCase from '#utils/snakeCase.js';
 import { sendSuccess, sendError } from '#utils/responseHelper.js';
 
@@ -40,6 +40,31 @@ export const deleteFileController = async (req, res) => {
     const result = await deleteFile(req.params.id);
     return sendSuccess(res, 200, {
       data: result
+    });
+  } catch (error) {
+    return sendError(res, error.statusCode || 500, {
+      code: error.code || "Internal Server Error",
+      message: error.message,
+      error: error.details || null,
+    });
+  }
+};
+
+export const patchFileLabelController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { files_label } = req.body;
+    if (!files_label) {
+      return sendError(res, 400, {
+        code: "Bad Request",
+        message: "files_label is required.",
+      });
+    }
+    const updatedFile = await updateFileLabel(id, files_label);
+    return sendSuccess(res, 200, {
+      code: "Success",
+      message: "File label updated successfully.",
+      data: updatedFile,
     });
   } catch (error) {
     return sendError(res, error.statusCode || 500, {

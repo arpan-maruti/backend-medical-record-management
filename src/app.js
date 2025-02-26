@@ -14,9 +14,22 @@ import FileRoutes from '#routes/fileRoutes.js';
 
 const app = express();
 
+
+
+const allowedOrigins = [
+    process.env.CORS_ORIGIN_1,  // Example: 'https://frontend-app.onrender.com'
+    process.env.CORS_ORIGIN_2   // Example: 'http://localhost:4200'
+];
+
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN, // Your frontend URL
-    credentials: true, // Allow cookies to be sent
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true); // Allow the request
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true // Allow cookies and authentication headers
 };
 
 app.use(cors(corsOptions));

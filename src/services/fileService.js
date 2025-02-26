@@ -7,22 +7,25 @@ export const createFile = async (req) => {
     const {
       fileType,
       fileFormat,
-      noOfPages,
+      
       filesLabel,
       createdBy,
       modifiedBy,
+      fileName,
+      filePath,
+      
     } = req.body;
 
-    const filePath = `/files/${req.file.filename}`;
-    const fileName = req.file.originalname;
+    
+   
 
     const newFile = new File({
-      fileName: fileName,
+      fileName,
       filePath,
-      fileSize: req.file.size,
+     
       fileType,
       fileFormat,
-      noOfPages,
+      
       filesLabel,
       createdBy,
       modifiedBy,

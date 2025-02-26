@@ -17,7 +17,6 @@ const fileSchema = new Schema(
     fileSize: {
       type: Number,
       default: 0,
-      required: true,
     },
     fileType: {
       type: String,
@@ -38,12 +37,12 @@ const fileSchema = new Schema(
     noOfPages: {
       type: Number,
       default: 0,
-      required: true,
+    
     },
     filesLabel: {
       type: String,
       default: null,
-      required: true,
+     
     },
     isDeleted: {
       type: Boolean,

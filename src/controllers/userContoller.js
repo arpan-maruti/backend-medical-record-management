@@ -173,10 +173,12 @@ export const getUsers = async (req, res) => {
 export const getUserByIdController = async (req, res) => {
     try {
         const user = await getUserById(req.params.id);
+        const updatedUsers = convertKeysToSnakeCase(user.toObject());
+    
         return sendSuccess(res, 200, {
             code: "Success",
             message: "User retrieved successfully.",
-            data:  user ,
+            data:  updatedUsers ,
         });
     } catch (err) {
         return sendError(res, 404, { code: "Not Found", message: err.message });

@@ -164,36 +164,46 @@ export const getUserById = async (id) => {
 export const fetchCasesofUserService = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
-        console.log("authHeader" + authHeader);
         if (!authHeader) {
             throw new Error("Authorization header missing");
         }
         const token = authHeader.split(" ")[1];
-        console.log("token" + token);
+
         let decoded;
         try {
             decoded = jwt.verify(token, JWT_SECRET);
         } catch (error) {
             throw new Error("Invalid token");
         }
-        // Use id from the decoded payload
-        const id = decoded.id;
 
+        const id = decoded.id;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
         let sortBy = req.query.sort || "-createdAt";
         const skip = (page - 1) * limit;
 
-        let searchCriteria = { parentId: null, createdBy: id, isDeleted: false };
-        const totalCases = await Case.countDocuments(searchCriteria);
-        if (req.query.client_name) {
-            searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' };
+        // Build search criteria based on user role
+        const findBy = req.query.case_status ? { caseStatus: req.query.case_status } : {};
+        let searchCriteria;
+        if (req.user.userRole === "admin") {
+            searchCriteria = { parentId: null, isDeleted: false, ...findBy };
+        } else if (req.user.userRole === "user") {
+            searchCriteria = { parentId: null, createdBy: id, isDeleted: false, ...findBy };
         }
-        if (totalCases === 0) {
-            return { cases: [], pagination: { total_items: 0, total_pages: 0, current_page: page, items_per_page: limit } };
-        }
-        const totalPages = Math.ceil(totalCases / limit);
 
+        // Apply client_name filter before counting total cases
+        if (req.query.client_name) {
+            searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
+        }
+
+        // Count total cases that match search criteria
+        const totalCases = await Case.countDocuments(searchCriteria);
+        
+        if (totalCases === 0) {
+            return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
+        }
+
+        const totalPages = Math.ceil(totalCases / limit);
         if (skip >= totalCases) {
             throw new Error("This page does not exist");
         }
@@ -202,8 +212,10 @@ export const fetchCasesofUserService = async (req, res) => {
             sortBy = sortBy.split(",").join(" ");
         }
 
+        // Fetch filtered and paginated data
         const cases = await Case.find(searchCriteria)
             .sort(sortBy)
+            .collation({ locale: "en", strength: 2 }) // Ensures case-insensitive sorting
             .limit(limit)
             .skip(skip)
             .populate({
@@ -217,7 +229,8 @@ export const fetchCasesofUserService = async (req, res) => {
                     }
                 }
             })
-            .populate("modifiedBy", "firstName lastName").lean();
+            .populate("modifiedBy", "firstName lastName")
+            .lean();
 
         const pagination = {
             totalItems: totalCases,
@@ -231,6 +244,7 @@ export const fetchCasesofUserService = async (req, res) => {
         throw new Error(err.message);
     }
 };
+
 
 
 

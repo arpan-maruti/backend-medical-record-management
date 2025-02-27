@@ -1,5 +1,6 @@
 import Case from "#models/case.js";
 import e from "express";
+import { createFile } from "#services/fileService.js";
 // import Parameter from "#models/parameter.js";
 export const addCaseService = async ({ parentId,
   clientName,
@@ -110,13 +111,13 @@ export const getAllCasesService = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const findBy = req.query.case_status ? { caseStatus: req.query.case_status } : {};
     const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false, ...findBy });
-    
+
     if (parseInt(req.query.limit) === -1) {
       limit = totalCases;
     } else {
       limit = parseInt(req.query.limit) || 5;
     }
-    
+
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
     const totalPages = Math.ceil(totalCases / limit);
@@ -131,6 +132,7 @@ export const getAllCasesService = async (req, res) => {
 
     // Fetch cases with parameters and modifiedBy populated
     const cases = await Case.find({ parentId: null, isDeleted: false, ...findBy })
+      .collation({ locale: "en", strength: 2 }) // Enables case-insensitive sorting
       .sort(sortBy)
       .limit(limit)
       .skip(skip)
@@ -159,3 +161,34 @@ export const getAllCasesService = async (req, res) => {
     throw new Error(err.message);
   }
 };
+
+
+export const createFileForCase = async (req, caseId) => {
+  try {
+    // Create the file
+    console.log(req.body);
+    const fileCreationResult = await createFile(req);
+    console.log(fileCreationResult);
+    const newFile = fileCreationResult.data;
+    // Update the case document by adding the new file. Assumes the Case model has a "files" array field.
+    const updatedCase = await Case.findByIdAndUpdate(
+      caseId,
+      { $push: { files: newFile._id } },
+      { new: true, runValidators: true }
+    );
+    if (!updatedCase) {
+      throw { statusCode: 404, message: "Case not found" };
+    }
+    return {
+      message: "File created and added to case successfully.",
+      file: newFile,
+      case: updatedCase,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+
+// // Filtering
+// if(req.query.caseStatus) query = query.find({caseStatus: req.query.caseStatus});

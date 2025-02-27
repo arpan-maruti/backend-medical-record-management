@@ -5,6 +5,7 @@ import roleMiddleware from "#middlewares/roleMiddlewares.js";
 
 const router = express.Router();
 
+
 // POST: Create a new case
 router.post(
   "/",
@@ -59,6 +60,12 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   roleMiddleware(['user', 'admin']),
   caseController.getFilesOfCase
+);
+
+router.post("/:caseId/files", 
+  passport.authenticate('jwt', { session: false }), 
+  roleMiddleware(['user','admin']),
+  caseController.createCaseFileController
 );
 
 export default router;

@@ -111,13 +111,13 @@ export const getAllCasesService = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const findBy = req.query.case_status ? { caseStatus: req.query.case_status } : {};
     const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false, ...findBy });
-    
+
     if (parseInt(req.query.limit) === -1) {
       limit = totalCases;
     } else {
       limit = parseInt(req.query.limit) || 5;
     }
-    
+
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
     const totalPages = Math.ceil(totalCases / limit);
@@ -132,6 +132,7 @@ export const getAllCasesService = async (req, res) => {
 
     // Fetch cases with parameters and modifiedBy populated
     const cases = await Case.find({ parentId: null, isDeleted: false, ...findBy })
+      .collation({ locale: "en", strength: 2 }) // Enables case-insensitive sorting
       .sort(sortBy)
       .limit(limit)
       .skip(skip)

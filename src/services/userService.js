@@ -184,13 +184,13 @@ export const fetchCasesofUserService = async (req, res) => {
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
     
-    let searchCriteria = { createdBy: id, isDeleted: false };
-    if (req.query.clientName) {
-        searchCriteria.clientName = { $regex: req.query.clientName, $options: 'i' };
+    let searchCriteria = { parentId: null, createdBy: id, isDeleted: false };
+    const totalCases = await Case.countDocuments(searchCriteria);
+    if (req.query.client_name) {
+        searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' };
     }
-    const totalCases = await Case.countDocuments({ createdBy: id, isDeleted: false });
     if (totalCases === 0) {
-        return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
+        return { cases: [], pagination: { total_items: 0, total_pages: 0, current_page: page, items_per_page: limit } };
     }
     const totalPages = Math.ceil(totalCases / limit);
     
@@ -217,7 +217,7 @@ export const fetchCasesofUserService = async (req, res) => {
             }
         }
       })
-      .populate("modifiedBy", "firstName lastName");
+      .populate("modifiedBy", "firstName lastName").lean();
   
       const pagination = {
       totalItems: totalCases,

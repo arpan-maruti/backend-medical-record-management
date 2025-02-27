@@ -188,7 +188,7 @@ export const fetchCasesofUserService = async (req, res) => {
     if (req.query.clientName) {
         searchCriteria.clientName = { $regex: req.query.clientName, $options: 'i' };
     }
-    const totalCases = await Case.countDocuments({ createdBy: id, isDeleted: false });
+    const totalCases = await Case.countDocuments({ parentId:null,createdBy: id, isDeleted: false });
     if (totalCases === 0) {
         return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
     }

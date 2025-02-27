@@ -7,7 +7,6 @@ export const createFile = async (req) => {
     const {
       fileType,
       fileFormat,
-      
       filesLabel,
       createdBy,
       modifiedBy,
@@ -16,16 +15,11 @@ export const createFile = async (req) => {
       
     } = req.body;
 
-    
-   
-
     const newFile = new File({
       fileName,
       filePath,
-     
       fileType,
       fileFormat,
-      
       filesLabel,
       createdBy,
       modifiedBy,

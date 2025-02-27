@@ -211,7 +211,6 @@ export const logout = async (req, res) => {
 
 export const fetchCasesofUser = async (req, res) => {
     try {
-        console.log("hello");
         const { cases, pagination } = await fetchCasesofUserService(req, res);
         const newCases = convertKeysToSnakeCase(cases);
         const newPagination = convertKeysToSnakeCase(pagination);

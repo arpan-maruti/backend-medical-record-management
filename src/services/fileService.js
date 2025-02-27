@@ -4,7 +4,6 @@ import Case from "#models/case.js";
 // Function for file creation
 export const createFile = async (req) => {
   try {
-
     const {
       fileType,
       fileFormat,
@@ -13,7 +12,6 @@ export const createFile = async (req) => {
       modifiedBy,
       fileName,
       filePath,
-      
     } = req.body;
 
     const newFile = new File({
@@ -25,7 +23,9 @@ export const createFile = async (req) => {
       createdBy,
       modifiedBy,
     });
+
     await newFile.save({ runValidators: true });
+
     return {
       code: "Created",
       message: "File created successfully.",
@@ -70,19 +70,19 @@ export const deleteFile = async (fileId) => {
 
 
 export const updateFileLabel = async (fileId, newLabel) => {
-  const updatedFile = await File.findByIdAndUpdate(
-    fileId,
-    { filesLabel: newLabel },
-    { new: true, runValidators: true }
-  );
-  if (!updatedFile) {
-    throw {
-      statusCode: 404,
-      code: "Not Found",
-      message: "File not found",
-    };
+  try {
+    const updatedFile = await File.findByIdAndUpdate(
+      fileId,
+      { filesLabel: newLabel },
+      { new: true, runValidators: true }
+    );
+    if (!updatedFile) {
+      throw new Error("Error while updating file");
+    }
+    return updatedFile;
+  } catch (err) {
+    throw new Error(err.message);
   }
-  return updatedFile;
 };
 
 

@@ -1,5 +1,6 @@
 import Case from "#models/case.js";
 import e from "express";
+import { createFile } from "#services/fileService.js";
 // import Parameter from "#models/parameter.js";
 export const addCaseService = async ({ parentId,
   clientName,
@@ -160,7 +161,31 @@ export const getAllCasesService = async (req, res) => {
   }
 };
 
-
+export const createFileForCase = async (req, caseId) => {
+  try {
+    // Create the file
+    console.log(req.body);
+    const fileCreationResult = await createFile(req);
+    console.log(fileCreationResult);
+    const newFile = fileCreationResult.data;
+    // Update the case document by adding the new file. Assumes the Case model has a "files" array field.
+    const updatedCase = await Case.findByIdAndUpdate(
+      caseId,
+      { $push: { files: newFile._id } },
+      { new: true, runValidators: true }
+    );
+    if (!updatedCase) {
+      throw { statusCode: 404, message: "Case not found" };
+    }
+    return {
+      message: "File created and added to case successfully.",
+      file: newFile,
+      case: updatedCase,
+    };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
 
 
 // // Filtering

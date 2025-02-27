@@ -1,5 +1,6 @@
 import File from "#models/file.js";
 import User from "#models/user.js";
+import Case from "#models/case.js";
 // Function for file creation
 export const createFile = async (req) => {
   try {
@@ -83,3 +84,5 @@ export const updateFileLabel = async (fileId, newLabel) => {
   }
   return updatedFile;
 };
+
+

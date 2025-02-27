@@ -32,7 +32,7 @@ export const addCaseService = async ({ parentId,
 
 export const getCaseService = async ({ id }) => {
   try {
-    return Case.findOne({ _id: id, isDeleted: false });
+    return await Case.findOne({ _id: id, isDeleted: false });
   } catch (err) {
     throw new Error(err.message)
   }
@@ -108,7 +108,7 @@ export const getAllCasesService = async (req, res) => {
   try {
     let limit;
     const page = parseInt(req.query.page) || 1;
-    const findBy = req.query.caseStatus ? { caseStatus: req.query.caseStatus } : {};
+    const findBy = req.query.case_status ? { caseStatus: req.query.case_status } : {};
     const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false, ...findBy });
     
     if (parseInt(req.query.limit) === -1) {
@@ -159,9 +159,3 @@ export const getAllCasesService = async (req, res) => {
     throw new Error(err.message);
   }
 };
-
-
-
-
-// // Filtering
-// if(req.query.caseStatus) query = query.find({caseStatus: req.query.caseStatus});

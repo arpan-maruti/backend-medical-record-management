@@ -234,11 +234,20 @@ export const fetchCasesofUserService = async (req, res) => {
 
 
 
-// export const updateUser = async (user, updateData) => {
-//   Object.assign(user, updateData, { updatedAt: new Date() });
-//   await user.save();
-//   return user;
-// };
+export const updateUser = async (id, userData) => {
+    try {
+        console.log("id", id, "userData", userData);
+    
+        userData.updatedAt = new Date();
+        const updatedUser = await User.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: userData }, { runValidators: true }).lean();
+        if (!updatedUser) {
+            throw new Error("User not foundqq");
+        }
+        return await User.findOne({_id:id});
+    }catch (err) {
+        throw new Error(err.message);
+      }
+};
 
 
 // export const deleteUser = async (user, modifiedBy) => {

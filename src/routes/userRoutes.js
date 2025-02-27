@@ -9,8 +9,8 @@ import {
   getUsers,
   getUserByIdController,
   logout,
-  fetchCasesofUser
-  // updateUserController,
+  fetchCasesofUser,
+  updateUserController,
   // deleteUserController
 } from "#controllers/userContoller.js";
 import { getAllCases } from "#controllers/caseController.js";
@@ -45,6 +45,12 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   roleMiddleware(["user", "admin"]),
   getUserByIdController
+);
+router.patch(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  roleMiddleware(["admin"]),
+  updateUserController
 );
 router.post(
   "/register",

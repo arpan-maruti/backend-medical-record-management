@@ -13,11 +13,19 @@ import {
   // updateUserController,
   // deleteUserController
 } from "#controllers/userContoller.js";
+import { getAllCases } from "#controllers/caseController.js";
 import roleMiddleware from "#middlewares/roleMiddlewares.js";
 import passport from "passport";
 
 const router = express.Router();
-
+function getCases(req, res, next) {
+  console.log(req.user+" " +req.user.role);
+  if (req.user && req.user.userRole === "admin") {
+    return getAllCases(req, res, next);
+  } else {
+    return fetchCasesofUser(req, res, next);
+  }
+}
 // Routes
 router.get(
   "/",
@@ -30,7 +38,7 @@ router.get(
   "/cases",
   passport.authenticate("jwt", { session: false }),
   roleMiddleware(["user", "admin"]),
-  fetchCasesofUser
+  getCases
 );
 router.get(
   "/:id",

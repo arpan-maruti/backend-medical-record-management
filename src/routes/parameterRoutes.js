@@ -8,5 +8,5 @@ const router = express.Router();
 router.post("/", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']), parameterContoller.addInstruction);
 
 // Get: Get parameters acc to instructionMsg selected
-router.get("/instruction/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin']), parameterContoller.getParametersByInstruction);
+router.get("/instruction/:id", passport.authenticate('jwt', { session: false }), roleMiddleware(['admin','user']), parameterContoller.getParametersByInstruction);
 export default router;

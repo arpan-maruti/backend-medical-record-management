@@ -24,12 +24,12 @@ export const createFileController = async (req, res) => {
     const newResult = convertKeysToSnakeCase(req.body);
     return sendSuccess(res, 201, {
       code: "Created",
-      data: newResult
+      data: result
     });
   } catch (error) {
     return sendError(res, error.statusCode || 500, {
       code: error.code || "Internal Server Error",
-      message: error.message,
+      message: error.stack,
       error: error.details || null,
     });
   }

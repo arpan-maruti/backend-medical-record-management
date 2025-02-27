@@ -106,14 +106,17 @@ export const getSubCaseService = async ({ id }) => {
 
 export const getAllCasesService = async (req, res) => {
   try {
-
     let limit;
     const page = parseInt(req.query.page) || 1;
     const findBy = req.query.caseStatus ? { caseStatus: req.query.caseStatus } : {};
     const totalCases = await Case.countDocuments({ parentId: null, isDeleted: false, ...findBy });
     
-    if(req.query.limit = -1) {limit = totalCases}
-    else {limit = parseInt(req.query.limit) || 5};
+    if (parseInt(req.query.limit) === -1) {
+      limit = totalCases;
+    } else {
+      limit = parseInt(req.query.limit) || 5;
+    }
+    
     let sortBy = req.query.sort || "-createdAt";
     const skip = (page - 1) * limit;
     const totalPages = Math.ceil(totalCases / limit);
@@ -143,8 +146,6 @@ export const getAllCasesService = async (req, res) => {
         }
       })
       .populate("modifiedBy", "firstName lastName");
-
-
 
     const pagination = {
       totalItems: totalCases,

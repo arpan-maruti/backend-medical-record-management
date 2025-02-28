@@ -7,7 +7,8 @@ import {
     verifyUserOTP,
     getAllUsers,
     getUserById,
-    fetchCasesofUserService
+    fetchCasesofUserService,
+    updateUser
 } from "#services/userService.js";
 import convertKeysToSnakeCase from '#utils/snakeCase.js';
 import { sendSuccess, sendError } from '#utils/responseHelper.js'; 
@@ -85,14 +86,16 @@ export const login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-
+    console.log("req.body", req.body);
     try {
         const user = await loginUser(email, password);
+        console.log("user", user);
         return sendSuccess(res, 200, {
             message: "Login successful",
             data: { phone: user.phoneNumber },
         });
     } catch (err) {
+        console.log(err);
         return sendError(res, 400, { code: "Error", message: err.message });
     }
 };
@@ -233,18 +236,23 @@ export const fetchCasesofUser = async (req, res) => {
 
 // Uncomment and update the lines below for additional controllers as needed:
 
-// export const updateUserController = async (req, res) => {
-//     try {
-//         const updatedUser = await updateUser(req.user, req.body);
-//         return sendSuccess(res, 200, {
-//             code: "Success",
-//             message: "User updated successfully.",
-//             data: updatedUser,
-//         });
-//     } catch (err) {
-//         return sendError(res, 500, { code: "Internal Server Error", message: err.message });
-//     }
-// };
+export const updateUserController = async (req, res) => {
+    try {
+        const {id} = req?.params;
+        const userData = req?.body;
+        let user = await updateUser(id, userData);
+        user = user.toObject();
+        const updatedUser = convertKeysToSnakeCase(user);
+        
+        return sendSuccess(res, 200, {
+            code: "Success",
+            message: "User updated successfully.",
+            data: updatedUser,
+        });
+    } catch (err) {
+        return sendError(res, 500, { code: "Internal Server Error", message: err.message });
+    }
+};
 
 // export const deleteUserController = async (req, res) => {
 //     try {

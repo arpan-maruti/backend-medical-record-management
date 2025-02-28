@@ -206,6 +206,13 @@ export const getAllCases = async (req, res) => {
 export const createCaseFileController = async (req, res) => {
     try {
       const { caseId } = req.params;
+      req.body.filePath = req.file.filename;
+      if (!req.file) {
+        return sendError(res, 400, {
+          code: "Bad Request",
+          message: "No file uploaded",
+        });
+      }
       const result = await caseService.createFileForCase(req, caseId);
       return sendSuccess(res, 201, {
         code: "Created",

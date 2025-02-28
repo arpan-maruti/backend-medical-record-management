@@ -166,7 +166,7 @@ export const getAllCasesService = async (req, res) => {
 export const createFileForCase = async (req, caseId) => {
   try {
     // Create the file
-    console.log(req.body);
+    console.log("createFileForCase : ", req.body);
     const fileCreationResult = await createFile(req);
     console.log(fileCreationResult);
     const newFile = fileCreationResult.data;

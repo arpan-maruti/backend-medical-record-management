@@ -16,8 +16,18 @@ import {
 import { getAllCases } from "#controllers/caseController.js";
 import roleMiddleware from "#middlewares/roleMiddlewares.js";
 import passport from "passport";
-
+import multer from 'multer';
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/files/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage });
 // Routes
 router.get(
   "/",
@@ -30,6 +40,7 @@ router.get(
   "/cases",
   passport.authenticate("jwt", { session: false }),
   roleMiddleware(["user", "admin"]),
+  upload.single("file"),
   fetchCasesofUser
 );
 router.get(

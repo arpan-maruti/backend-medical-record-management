@@ -108,37 +108,37 @@ export const sendOTPToUser = async (email) => {
 };
 
 
-export const verifyUserOTP = async (email, otp) => {
-    try {
+    export const verifyUserOTP = async (email, otp) => {
+        try {
 
-        const user = await User.findOne({ email, isDeleted: false });
-        if (!user) {
-            throw new Error('User not found');
+            const user = await User.findOne({ email, isDeleted: false });
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            const { phoneNumber, countryCode } = user;
+
+            if (!phoneNumber) {
+                throw new Error('User does not have a phone number');
+            }
+
+            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+            const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
+            
+            if (verificationCheck.status !== 'approved') {
+                throw new Error('OTP verification failed');
+            }
+            const payload = {
+                id: user._id,
+                role: user.role
+            };
+            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
+            console.log("token" + token);
+            return token;
+        } catch (err) {
+            throw new Error(err.message);
         }
-
-        const { phoneNumber, countryCode } = user;
-
-        if (!phoneNumber) {
-            throw new Error('User does not have a phone number');
-        }
-
-        const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-        const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
-
-        if (verificationCheck.status !== 'approved') {
-            throw new Error('OTP verification failed');
-        }
-        const payload = {
-            id: user._id,
-            role: user.role
-        };
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-        console.log("token" + token);
-        return token;
-    } catch (err) {
-        throw new Error(err.message);
-    }
-};
+    };
 
 
 export const getAllUsers = async () => {
@@ -188,6 +188,7 @@ export const fetchCasesofUserService = async (req, res) => {
             searchCriteria = { parentId: null, createdBy: id, isDeleted: false, ...findBy };
         }
 
+       
         if (req.query.client_name) {
             searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
         }

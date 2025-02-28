@@ -51,7 +51,9 @@ export const loginUser = async (email, password) => {
             throw new Error('User not found');
         }
 
-        const isMatch = bcrypt.compare(password, user.password);
+        console.log(user.password);
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log("isMatch", isMatch);
         if (!isMatch) {
             throw new Error('Invalid password');
         }
@@ -175,15 +177,10 @@ export const fetchCasesofUserService = async (req, res) => {
         } catch (error) {
             throw new Error("Invalid token");
         }
-
         const id = decoded.id;
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 5;
-        let sortBy = req.query.sort || "-createdAt";
-        const skip = (page - 1) * limit;
 
-        // Build search criteria based on user role
-        const findBy = req.query.case_status ? { caseStatus: req.query.case_status } : {};
+        const findBy = req.query?.case_status ? { caseStatus: req.query?.case_status } : {};
+
         let searchCriteria;
         if (req.user.userRole === "admin") {
             searchCriteria = { parentId: null, isDeleted: false, ...findBy };
@@ -196,8 +193,14 @@ export const fetchCasesofUserService = async (req, res) => {
             searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
         }
 
-        // Count total cases that match search criteria
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        let sortBy = req.query?.sort || "-createdAt";
+        const skip = (page - 1) * limit;
+
         const totalCases = await Case.countDocuments(searchCriteria);
+
+        
         
         if (totalCases === 0) {
             return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
@@ -247,12 +250,20 @@ export const fetchCasesofUserService = async (req, res) => {
 
 
 
-
-// export const updateUser = async (user, updateData) => {
-//   Object.assign(user, updateData, { updatedAt: new Date() });
-//   await user.save();
-//   return user;
-// };
+export const updateUser = async (id, userData) => {
+    try {
+        console.log("id", id, "userData", userData);
+    
+        userData.updatedAt = new Date();
+        const updatedUser = await User.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: userData }, { runValidators: true }).lean();
+        if (!updatedUser) {
+            throw new Error("User not foundqq");
+        }
+        return await User.findOne({_id:id});
+    }catch (err) {
+        throw new Error(err.message);
+      }
+};
 
 
 // export const deleteUser = async (user, modifiedBy) => {

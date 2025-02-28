@@ -87,7 +87,9 @@ export const addCase = async (req, res) => {
 export const getCase = async (req, res) => {
     try {
         const { id } = req.params;
-        const newCase = await caseService.getCaseService({ id });
+        let newCase = await caseService.getCaseService({ id });
+        // newCase = newCase.toObject();
+        // const updatedCase = convertKeysToSnakeCase(newCase);
         return sendSuccess(res, 200, {
             code: "Success",
             message: "Case retrieved successfully.",
@@ -105,7 +107,7 @@ export const getCase = async (req, res) => {
 export const fetchSubacaseOfCase = async (req, res) => {
     try {
         const { id } = req.params;
-        const subcases = await caseService.getSubCaseService({ id });
+        let subcases = await caseService.getSubCaseService({ id });
         const newCases = convertKeysToSnakeCase(subcases);
         return sendSuccess(res, 200, {
             code: "Success",
@@ -123,10 +125,10 @@ export const fetchSubacaseOfCase = async (req, res) => {
 };
 
 export const updateCase = async (req, res) => {
-    const { id } = req.params;
-    const caseData = req.body;
-
+    
     try {
+        const { id } = req.params;
+        const caseData = req.body;
         const updatedCase = await caseService.updateCaseService(id, caseData);
         return sendSuccess(res, 200, {
             code: "Success",

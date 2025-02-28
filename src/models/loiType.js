@@ -4,6 +4,8 @@ const loiTypeSchema = new mongoose.Schema({
   loiMsg: {
     type: String,
     required: [true, 'loi_msg is required'],
+    alias : 'loi_msg',
+    
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

@@ -88,12 +88,12 @@ export const getCase = async (req, res) => {
     try {
         const { id } = req.params;
         let newCase = await caseService.getCaseService({ id });
-        newCase = newCase.toObject();
-        const updatedCase = convertKeysToSnakeCase(newCase);
+        // newCase = newCase.toObject();
+        // const updatedCase = convertKeysToSnakeCase(newCase);
         return sendSuccess(res, 200, {
             code: "Success",
             message: "Case retrieved successfully.",
-            data: updatedCase,
+            data: newCase,
         });
     } catch (err) {
         return sendError(res, 500, {

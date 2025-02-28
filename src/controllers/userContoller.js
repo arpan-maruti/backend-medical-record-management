@@ -86,14 +86,16 @@ export const login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-
+    console.log("req.body", req.body);
     try {
         const user = await loginUser(email, password);
+        console.log("user", user);
         return sendSuccess(res, 200, {
             message: "Login successful",
             data: { phone: user.phoneNumber },
         });
     } catch (err) {
+        console.log(err);
         return sendError(res, 400, { code: "Error", message: err.message });
     }
 };

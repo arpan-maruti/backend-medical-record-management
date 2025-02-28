@@ -202,3 +202,20 @@ export const getAllCases = async (req, res) => {
     }
 };
 
+// New controller for creating file for a case
+export const createCaseFileController = async (req, res) => {
+    try {
+      const { caseId } = req.params;
+      const result = await caseService.createFileForCase(req, caseId);
+      return sendSuccess(res, 201, {
+        code: "Created",
+        data: result,
+      });
+    } catch (error) {
+      return sendError(res, error.statusCode || 500, {
+        code: error.code || "Internal Server Error",
+        message: error.message,
+        error: error.details || null,
+      });
+    }
+  };

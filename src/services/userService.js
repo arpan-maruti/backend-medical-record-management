@@ -50,10 +50,7 @@ export const loginUser = async (email, password) => {
         if (!user) {
             throw new Error('User not found');
         }
-
-        console.log(user.password);
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("isMatch", isMatch);
         if (!isMatch) {
             throw new Error('Invalid password');
         }
@@ -133,7 +130,7 @@ export const sendOTPToUser = async (email) => {
                 role: user.role
             };
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-            console.log("token" + token);
+            // console.log("token" + token);
             return token;
         } catch (err) {
             throw new Error(err.message);
@@ -192,9 +189,12 @@ export const fetchCasesofUserService = async (req, res) => {
         if (req.query.client_name) {
             searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
         }
+        if (req.query.ref_no) {
+            searchCriteria.refNumber = {$regex: req.query.ref_no, $options: 'i'};
+        }
 
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 5;
+        const limit = parseInt(req.query.limit) || 1;
         let sortBy = req.query?.sort || "-createdAt";
         const skip = (page - 1) * limit;
 

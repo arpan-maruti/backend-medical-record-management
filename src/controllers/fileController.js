@@ -20,6 +20,7 @@ export const validateFileFields = (req, res, next) => {
 
 export const createFileController = async (req, res) => {
   try {
+    req.body.filePath = req.file.filename;
     const result = await createFile(req);
     const newResult = convertKeysToSnakeCase(req.body);
     return sendSuccess(res, 201, {

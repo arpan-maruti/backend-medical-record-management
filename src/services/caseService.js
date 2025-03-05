@@ -31,13 +31,33 @@ export const addCaseService = async ({ parentId,
   }
 }
 
-export const getCaseService = async ({ id }) => {
+export const getCaseService = async ({ id, userId, userRole }) => {
   try {
-    return await Case.findOne({ _id: id, isDeleted: false });
+    const query = { _id: id, isDeleted: false };
+
+    // If the user is not an admin, restrict access to cases they created
+    if (userRole === 'user') {
+      query.createdBy = userId;
+    }
+
+    return await Case.findOne(query)
+      .populate({
+        path: 'parameters',
+        populate: {
+          path: 'instructionId',
+          select: 'instructionMsg loiId',
+          populate: {
+            path: 'loiId',
+            select: 'loiMsg'
+          }
+        }
+      })
+      .populate("modifiedBy", "firstName lastName")
+      .populate("parentId","refNumber");
   } catch (err) {
-    throw new Error(err.message)
+    throw new Error(err.message);
   }
-}
+};
 
 
 //think: modifiedBy

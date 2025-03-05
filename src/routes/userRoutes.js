@@ -77,3 +77,6 @@ router.post(
 // router.patch("/delete/:id", getAllUsers, deleteUserController);
 
 export default router;
+
+
+

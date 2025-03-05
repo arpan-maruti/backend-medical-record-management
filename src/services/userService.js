@@ -194,7 +194,7 @@ export const fetchCasesofUserService = async (req, res) => {
         }
 
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 1;
+        const limit = parseInt(req.query.limit) || 5;
         let sortBy = req.query?.sort || "-createdAt";
         const skip = (page - 1) * limit;
 
@@ -252,7 +252,6 @@ export const fetchCasesofUserService = async (req, res) => {
 
 export const updateUser = async (id, userData) => {
     try {
-        console.log("id", id, "userData", userData);
     
         userData.updatedAt = new Date();
         const updatedUser = await User.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: userData }, { runValidators: true }).lean();

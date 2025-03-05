@@ -86,7 +86,6 @@ export const login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-    console.log("req.body", req.body);
     try {
         const user = await loginUser(email, password);
         return sendSuccess(res, 200, {
@@ -188,7 +187,6 @@ export const getUserByIdController = async (req, res) => {
 
 // Add this at the end of the file along with existing exports
 export const logout = async (req, res) => {
-    console.log("hhh");
     try {
       // Expire the JWT cookie immediately by setting its expiration date to a past date
       res.cookie('jwt', '', { 
@@ -215,7 +213,6 @@ export const fetchCasesofUser = async (req, res) => {
         const { cases, pagination } = await fetchCasesofUserService(req, res);
         const newCases = convertKeysToSnakeCase(cases);
         const newPagination = convertKeysToSnakeCase(pagination);
-        console.log(newCases);
         return sendSuccess(res, 200, {
             code: "Success",
             length: cases.length,

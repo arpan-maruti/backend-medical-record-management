@@ -86,23 +86,33 @@ export const addCase = async (req, res) => {
 
 export const getCase = async (req, res) => {
     try {
-        const { id } = req.params;
-        let newCase = await caseService.getCaseService({ id });
-        // newCase = newCase.toObject();
-        // const updatedCase = convertKeysToSnakeCase(newCase);
-        return sendSuccess(res, 200, {
-            code: "Success",
-            message: "Case retrieved successfully.",
-            data: newCase,
+      const { id } = req.params;
+      const userId = req.user._id; // Assuming the user ID is stored in req.user after JWT authentication
+      const userRole = req.user.userRole; // Assuming the user role is stored in req.user after JWT authentication
+        
+        
+      let newCase = await caseService.getCaseService({ id, userId, userRole });
+  
+      if (!newCase) {
+        return sendError(res, 404, {
+          code: "Not Found",
+          message: "Case not found or you do not have permission to access this case.",
         });
+      }
+  
+      return sendSuccess(res, 200, {
+        code: "Success",
+        message: "Case retrieved successfully.",
+        data: newCase,
+      });
     } catch (err) {
-        return sendError(res, 500, {
-            code: "Internal Server Error",
-            message: "An error occurred while retrieving case.",
-            error: err.message,
-        });
+      return sendError(res, 500, {
+        code: "Internal Server Error",
+        message: "An error occurred while retrieving case.",
+        error: err.message,
+      });
     }
-};
+  };
 
 export const fetchSubacaseOfCase = async (req, res) => {
     try {

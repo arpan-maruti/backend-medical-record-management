@@ -3,7 +3,6 @@ import User from "#models/user.js";
 
 const { Schema } = mongoose;
 
-
 const fileSchema = new Schema(
   {
     fileName: {
@@ -21,8 +20,8 @@ const fileSchema = new Schema(
     fileType: {
       type: String,
       enum: {
-       values: ["loi", "document"],
-       message: `{VALUE} is not supported.`
+        values: ["loi", "document"],
+        message: `{VALUE} is not supported.`
       },
       required: true,
     },
@@ -31,17 +30,24 @@ const fileSchema = new Schema(
       enum: {
         values: ["pdf", "word"],
         message: `{VALUE} is not supported.`
-       },
+      },
       required: true,
     },
     noOfPages: {
       type: Number,
       default: 0,
-    
     },
     filesLabel: {
       type: String,
       default: null,
+    },
+    fileStatus: {
+      type: String,
+      enum: {
+        values: ["uploaded", "in progress", "AI Analysis Completed", "error"],
+        message: `{VALUE} is not supported.`
+      },
+      default: "uploaded",
     },
     isDeleted: {
       type: Boolean,

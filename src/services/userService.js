@@ -50,10 +50,7 @@ export const loginUser = async (email, password) => {
         if (!user) {
             throw new Error('User not found');
         }
-
-        console.log(user.password);
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("isMatch", isMatch);
         if (!isMatch) {
             throw new Error('Invalid password');
         }
@@ -133,7 +130,7 @@ export const sendOTPToUser = async (email) => {
                 role: user.role
             };
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-            console.log("token" + token);
+            // console.log("token" + token);
             return token;
         } catch (err) {
             throw new Error(err.message);
@@ -191,6 +188,9 @@ export const fetchCasesofUserService = async (req, res) => {
        
         if (req.query.client_name) {
             searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
+        }
+        if (req.query.ref_no) {
+            searchCriteria.refNumber = {$regex: req.query.ref_no, $options: 'i'};
         }
 
         if (req.query.ref_number) {
@@ -256,7 +256,6 @@ export const fetchCasesofUserService = async (req, res) => {
 
 export const updateUser = async (id, userData) => {
     try {
-        console.log("id", id, "userData", userData);
     
         userData.updatedAt = new Date();
         const updatedUser = await User.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: userData }, { runValidators: true }).lean();

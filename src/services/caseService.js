@@ -186,9 +186,7 @@ export const getAllCasesService = async (req, res) => {
 export const createFileForCase = async (req, caseId) => {
   try {
     // Create the file
-    console.log("createFileForCase : ", req.body);
     const fileCreationResult = await createFile(req);
-    console.log(fileCreationResult);
     const newFile = fileCreationResult.data;
     // Update the case document by adding the new file. Assumes the Case model has a "files" array field.
     const updatedCase = await Case.findByIdAndUpdate(

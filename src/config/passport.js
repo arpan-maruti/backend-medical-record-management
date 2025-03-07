@@ -12,14 +12,14 @@ passport.use(
     new JwtStrategy(options, async(jwtPayload, done) => {
         try {
             // Find the user associated with the JWT payload
-            console.log(jwtPayload);
+            // console.log(jwtPayload);
             
             const user = await User.findById(jwtPayload.id);
-            console.log(user);
+            // console.log(user);
             if (user) {
-                return done(null, user); // Pass user to req.user
+                return done(null, user);
             } else {
-                return done(null, false); // No user found
+                return done(null, false);
             }
         } catch (error) {
             return done(error, false);

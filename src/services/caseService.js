@@ -1,4 +1,5 @@
 import Case from "#models/case.js";
+import User from "#models/user.js";
 import e from "express";
 import { createFile } from "#services/fileService.js";
 // import Parameter from "#models/parameter.js";
@@ -25,6 +26,23 @@ export const addCaseService = async ({ parentId,
       createdBy,
       modifiedBy
     });
+    const user = await User.findOne({ _id: createdBy, isDeleted: false });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    let caseLength;
+    if(user.userRole==='user') {
+      if(parentId){ 
+         caseLength = await Case.countDocuments({parentId:null, isDeleted:false, createdBy:createdBy});
+      }
+      else {
+         caseLength = await Case.countDocuments({parentId:parentId, isDeleted:false, createdBy:createdBy});
+      }
+      if(caseLength > 10){
+        throw new Error("You can't create more cases.");
+      }
+    }
     return await newCase.save({ runValidators: true });
   } catch (err) {
     throw new Error(err.message)

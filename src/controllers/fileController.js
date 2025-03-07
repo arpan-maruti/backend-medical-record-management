@@ -1,4 +1,4 @@
-import { createFile, deleteFile, updateFileLabel } from "#services/fileService.js";
+import { createFile, deleteFile, updateFileLabel, getFile, patchFile } from "#services/fileService.js";
 import convertKeysToSnakeCase from '#utils/snakeCase.js';
 import { sendSuccess, sendError } from '#utils/responseHelper.js';
 
@@ -32,6 +32,51 @@ export const createFileController = async (req, res) => {
       code: error.code || "Internal Server Error",
       message: error.stack,
       error: error.details || null,
+    });
+  }
+};
+
+// New controller for fetching file details
+export const getFileController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const fileData = await getFile(id);
+    return sendSuccess(res, 200, {
+      code: "Success",
+      message: "File fetched successfully",
+      data: fileData,
+    });
+  } catch (err) {
+    return sendError(res, 500, {
+      code: "Internal Server Error",
+      message: err.message,
+    });
+  }
+};
+
+// New controller for patching a file object
+export const patchFileController = async (req, res) => {
+  try {
+
+    // Only update filePath if the request body has fileFormat and a file is uploaded
+    if (Object.prototype.hasOwnProperty.call(req.body, "fileFormat") && req.file) {
+      console.log("here");
+      req.body.filePath = req.file.filename;
+    }
+    console.log("req.file", req.body);
+    const { id } = req.params;
+    const updateData = req.body;
+    console.log("updateData", updateData);
+    const updatedFile = await patchFile(id, updateData);
+    return sendSuccess(res, 200, {
+      code: "Success",
+      message: "File updated successfully",
+      data: updatedFile,
+    });
+  } catch (err) {
+    return sendError(res, 500, {
+      code: "Internal Server Error",
+      message: err.message,
     });
   }
 };
@@ -75,5 +120,3 @@ export const patchFileLabelController = async (req, res) => {
     });
   }
 };
-
-

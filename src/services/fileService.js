@@ -1,6 +1,7 @@
 import File from "#models/file.js";
-import User from "#models/user.js";
+
 import Case from "#models/case.js";
+
 // Function for file creation
 export const createFile = async (req) => {
   try {
@@ -36,6 +37,34 @@ export const createFile = async (req) => {
   }
 };
 
+export const getFile = async (fileId) => {
+  try {
+    const fileData = await File.findById(fileId)
+    .populate("createdBy", "firstName lastName")
+    .populate("modifiedBy", "firstName lastName");
+    if (!fileData) {
+      throw new Error("File not found");
+    }
+    return fileData;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const patchFile = async (fileId, updateData) => {
+  try {
+    const updatedFile = await File.findByIdAndUpdate(fileId, updateData, {
+      new: true,
+      runValidators: true
+    });
+    if (!updatedFile) {
+      throw new Error("File not found");
+    }
+    return updatedFile;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
 
 //fix:Update this api
 export const deleteFile = async (fileId) => {
@@ -47,19 +76,19 @@ export const deleteFile = async (fileId) => {
         message: "File not found",
       };
     }
-  
+
     const updatedCase = await Case.updateMany(
       { file: fileId },
       { $pull: { file: fileId } }
     );
-  
+
     if (updatedCase.nModified === 0) {
       throw {
         statusCode: 404,
         message: "Case not found with this file reference",
       };
     }
-  
+
     return {
       message: "File deleted and reference removed from case",
     };
@@ -67,7 +96,6 @@ export const deleteFile = async (fileId) => {
     throw new Error(err.message);
   }
 };
-
 
 export const updateFileLabel = async (fileId, newLabel) => {
   try {
@@ -84,5 +112,3 @@ export const updateFileLabel = async (fileId, newLabel) => {
     throw new Error(err.message);
   }
 };
-
-

@@ -193,6 +193,10 @@ export const fetchCasesofUserService = async (req, res) => {
             searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
         }
 
+        if (req.query.ref_number) {
+            searchCriteria.refNumber = { $regex: req.query.ref_number, $options: 'i' }; // Case-insensitive search
+        }
+
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
         let sortBy = req.query?.sort || "-createdAt";

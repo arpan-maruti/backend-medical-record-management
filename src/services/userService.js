@@ -109,6 +109,7 @@ export const sendOTPToUser = async (email) => {
         try {
 
             const user = await User.findOne({ email, isDeleted: false });
+            
             if (!user) {
                 throw new Error('User not found');
             }
@@ -127,7 +128,7 @@ export const sendOTPToUser = async (email) => {
             }
             const payload = {
                 id: user._id,
-                role: user.role
+                role: user.userRole
             };
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
             // console.log("token" + token);

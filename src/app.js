@@ -16,17 +16,8 @@ const app = express();
 
 
 
-const allowedOrigins = [
-    process.env.CORS_ORIGIN_1,  // Example: 'https://frontend-app.onrender.com'
-    process.env.CORS_ORIGIN_2   // Example: 'http://localhost:4200'
-];
-
-const corsOptions = {
-    origin: process.env.CORS_ORIGIN_2, // Your frontend URL
-    credentials: true, // Allow cookies to be sent
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
+app.options("*", cors());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());

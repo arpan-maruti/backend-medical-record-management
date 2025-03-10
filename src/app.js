@@ -17,11 +17,12 @@ const app = express();
 
 
 app.use(cors({
-    origin: 'https://medical-record-management.netlify.app', // Allow only your frontend
+    origin: true, // Allow all origins
     credentials: true, // Allow cookies and authentication headers
-    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS', // Added PATCH
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 }));
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());

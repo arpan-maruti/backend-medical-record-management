@@ -60,13 +60,13 @@ export const patchFileController = async (req, res) => {
 
     // Only update filePath if the request body has fileFormat and a file is uploaded
     if (Object.prototype.hasOwnProperty.call(req.body, "fileFormat") && req.file) {
-      console.log("here");
+      // console.log("here");
       req.body.filePath = req.file.filename;
     }
-    console.log("req.file", req.body);
+    // console.log("req.file", req.body);
     const { id } = req.params;
     const updateData = req.body;
-    console.log("updateData", updateData);
+    // console.log("updateData", updateData);
     const updatedFile = await patchFile(id, updateData);
     return sendSuccess(res, 200, {
       code: "Success",

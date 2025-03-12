@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { sendPasswordSetupEmail } from "#utils/mailer.js";
 import { sendOTP, verifyOTP } from '#utils/otp.js';
 import Case from "#models/case.js";
+import mongoose from "mongoose";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async ({
@@ -105,37 +106,37 @@ export const sendOTPToUser = async (email) => {
 };
 
 
-    export const verifyUserOTP = async (email, otp) => {
-        try {
+export const verifyUserOTP = async (email, otp) => {
+    try {
 
-            const user = await User.findOne({ email, isDeleted: false });
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            const { phoneNumber, countryCode } = user;
-
-            if (!phoneNumber) {
-                throw new Error('User does not have a phone number');
-            }
-
-            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-            const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
-            
-            if (verificationCheck.status !== 'approved') {
-                throw new Error('OTP verification failed');
-            }
-            const payload = {
-                id: user._id,
-                role: user.role
-            };
-            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-            // console.log("token" + token);
-            return token;
-        } catch (err) {
-            throw new Error(err.message);
+        const user = await User.findOne({ email, isDeleted: false });
+        if (!user) {
+            throw new Error('User not found');
         }
-    };
+
+        const { phoneNumber, countryCode } = user;
+
+        if (!phoneNumber) {
+            throw new Error('User does not have a phone number');
+        }
+
+        const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+        const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
+
+        if (verificationCheck.status !== 'approved') {
+            throw new Error('OTP verification failed');
+        }
+        const payload = {
+            id: user._id,
+            role: user.role
+        };
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
+        // console.log("token" + token);
+        return token;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
 
 
 export const getAllUsers = async () => {
@@ -163,18 +164,11 @@ export const getUserById = async (id) => {
 export const fetchCasesofUserService = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            throw new Error("Authorization header missing");
-        }
+        if (!authHeader) throw new Error("Authorization header missing");
+        
         const token = authHeader.split(" ")[1];
-
-        let decoded;
-        try {
-            decoded = jwt.verify(token, JWT_SECRET);
-        } catch (error) {
-            throw new Error("Invalid token");
-        }
-        const id = decoded.id;
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const id = decoded?.id;
 
         const findBy = req.query?.case_status ? { caseStatus: req.query?.case_status } : {};
 
@@ -185,16 +179,12 @@ export const fetchCasesofUserService = async (req, res) => {
             searchCriteria = { parentId: null, createdBy: id, isDeleted: false, ...findBy };
         }
 
-       
-        if (req.query.client_name) {
-            searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' }; // Case-insensitive search
-        }
-        if (req.query.ref_no) {
-            searchCriteria.refNumber = {$regex: req.query.ref_no, $options: 'i'};
-        }
 
+        if (req.query.client_name) {
+            searchCriteria.clientName = { $regex: req.query.client_name, $options: 'i' };
+        }
         if (req.query.ref_number) {
-            searchCriteria.refNumber = { $regex: req.query.ref_number, $options: 'i' }; // Case-insensitive search
+            searchCriteria.refNumber = { $regex: req.query.ref_number, $options: 'i' };
         }
 
         const page = parseInt(req.query.page) || 1;
@@ -202,27 +192,12 @@ export const fetchCasesofUserService = async (req, res) => {
         let sortBy = req.query?.sort || "-createdAt";
         const skip = (page - 1) * limit;
 
-        const totalCases = await Case.countDocuments(searchCriteria);
 
-        
-        
-        if (totalCases === 0) {
-            return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
-        }
-
-        const totalPages = Math.ceil(totalCases / limit);
-        if (skip >= totalCases) {
-            throw new Error("This page does not exist");
-        }
-
-        if (sortBy) {
-            sortBy = sortBy.split(",").join(" ");
-        }
-
-        // Fetch filtered and paginated data
-        const cases = await Case.find(searchCriteria)
+        const [totalCases, cases] = await Promise.all([
+            Case.countDocuments(searchCriteria),
+            Case.find(searchCriteria)
             .sort(sortBy)
-            .collation({ locale: "en", strength: 2 }) // Ensures case-insensitive sorting
+            .collation({ locale: "en", strength: 2 })
             .limit(limit)
             .skip(skip)
             .populate({
@@ -237,35 +212,73 @@ export const fetchCasesofUserService = async (req, res) => {
                 }
             })
             .populate("modifiedBy", "firstName lastName")
-            .lean();
+            .populate({
+                path: 'files',
+                select: '_id fileStatus fileType'
+            })
+            .lean()
+        ]);
 
-        const pagination = {
+        
+        if (!totalCases) {
+            return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
+        }
+        if (skip >= totalCases) {
+            throw new Error("This page does not exist");
+        }
+        if (sortBy) {
+            sortBy = sortBy.split(",").join(" ");
+        }
+
+
+        const bulkOps = cases.map(caseDoc => {
+            let fileStatus = caseDoc.files.filter(file => file.fileType !== 'loi').map(file => file.fileStatus);
+
+            const statusPriority = [
+                'error',
+                'in progress',
+                'AI Analysis Completed',
+                'uploaded'
+            ];
+
+            const newCaseStatus = statusPriority.find(status => 
+                fileStatus.includes(status)
+            ) || 'uploaded';
+
+            return {
+                updateOne: {
+                    filter: { _id: caseDoc._id },
+                    update: { $set: { caseStatus: newCaseStatus } }
+                }
+            };
+
+        });
+        if (bulkOps.length > 0) {
+            await Case.bulkWrite(bulkOps);
+        }
+        return { cases, pagination : {
             totalItems: totalCases,
-            totalPages: totalPages,
+            totalPages: Math.ceil(totalCases / limit),
             currentPage: page,
             itemsPerPage: limit,
-        };
-
-        return { cases, pagination };
+        } };
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
-
-
 export const updateUser = async (id, userData) => {
     try {
-    
+
         userData.updatedAt = new Date();
         const updatedUser = await User.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: userData }, { runValidators: true }).lean();
         if (!updatedUser) {
-            throw new Error("User not foundqq");
+            throw new Error("User not found");
         }
-        return await User.findOne({_id:id});
-    }catch (err) {
+        return await User.findOne({ _id: id });
+    } catch (err) {
         throw new Error(err.message);
-      }
+    }
 };
 
 

@@ -25,6 +25,7 @@
     "module-alias": "^2.2.3",
     "mongodb": "^6.13.0",
     "mongoose": "^8.9.7",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
@@ -32,16 +33,16 @@
     "passport-jwt": "^4.0.1",
     "passport-oauth2": "^1.8.0",
     "path": "^0.12.7",
-    "twilio": "^5.4.4"
+    "twilio": "^5.4.4",
+    "winston": "^3.17.0"
   },
   "imports": {
-  "#middlewares/*": "./src/middlewares/*",
-  "#routes/*": "./src/routes/*",
-  "#models/*": "./src/models/*",
-  "#config/*": "./src/config/*",
-  "#utils/*": "./src/utils/*",
-  "#services/*": "./src/services/*",
-  "#controllers/*": "./src/controllers/*"
-}
-  
+    "#middlewares/*": "./src/middlewares/*",
+    "#routes/*": "./src/routes/*",
+    "#models/*": "./src/models/*",
+    "#config/*": "./src/config/*",
+    "#utils/*": "./src/utils/*",
+    "#services/*": "./src/services/*",
+    "#controllers/*": "./src/controllers/*"
+  }
 }

@@ -8,9 +8,9 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceSid = process.env.TWILIO_SERVICE_SID;
 
 // Log to ensure environment variables are loaded
-console.log('TWILIO_SID:', accountSid);
-console.log('TWILIO_AUTH_TOKEN:', authToken);
-console.log('TWILIO_SERVICE_SID:', serviceSid);
+// console.log('TWILIO_SID:', accountSid);
+// console.log('TWILIO_AUTH_TOKEN:', authToken);
+// console.log('TWILIO_SERVICE_SID:', serviceSid);
 
 if (!accountSid || !authToken || !serviceSid) {
   throw new Error('Twilio credentials are not defined in environment variables');

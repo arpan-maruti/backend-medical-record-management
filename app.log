@@ -1,0 +1,88 @@
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases/\",\"status\":\"200\",\"responseTime\":\"148.530\"}","timestamp":"2025-03-12T13:16:56.498Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases/\",\"status\":\"200\",\"responseTime\":\"135.058\"}","timestamp":"2025-03-12T13:17:22.077Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"200\",\"responseTime\":\"47.137\"}","timestamp":"2025-03-12T13:18:57.758Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"responseTime\":\"133.655\"}","timestamp":"2025-03-12T13:18:57.859Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"35.101\"}","timestamp":"2025-03-12T13:18:58.919Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"responseTime\":\"108.335\"}","timestamp":"2025-03-12T13:18:59.001Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"39.182\"}","timestamp":"2025-03-12T13:19:13.306Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"-\",\"responseTime\":\"-\"}","timestamp":"2025-03-13T05:15:04.804Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"-\",\"responseTime\":\"-\"}","timestamp":"2025-03-13T05:15:04.811Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"-\",\"responseTime\":\"-\"}","timestamp":"2025-03-13T05:15:04.811Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"-\",\"responseTime\":\"-\"}","timestamp":"2025-03-13T05:15:04.813Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"-\",\"responseTime\":\"-\"}","timestamp":"2025-03-13T05:15:04.814Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"200\",\"responseTime\":\"883.883\"}","timestamp":"2025-03-13T05:15:25.808Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/send-otp\",\"status\":\"200\",\"responseTime\":\"1209.733\"}","timestamp":"2025-03-13T05:15:27.028Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"200\",\"responseTime\":\"128.292\"}","timestamp":"2025-03-13T05:15:27.131Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/send-otp\",\"status\":\"200\",\"responseTime\":\"839.974\"}","timestamp":"2025-03-13T05:15:27.990Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/verify-otp\",\"status\":\"200\",\"responseTime\":\"339.908\"}","timestamp":"2025-03-13T05:15:44.324Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"110.257\"}","timestamp":"2025-03-13T05:15:44.549Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"responseTime\":\"337.140\"}","timestamp":"2025-03-13T05:15:44.808Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"105.406\"}","timestamp":"2025-03-13T05:45:07.436Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"responseTime\":\"2485.141\"}","timestamp":"2025-03-13T05:45:09.831Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"83.731\"}","timestamp":"2025-03-13T05:45:25.467Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"responseTime\":\"276.990\"}","timestamp":"2025-03-13T05:45:25.682Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"400\",\"responseTime\":\"132.930\"}","timestamp":"2025-03-13T05:46:32.310Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"400\",\"responseTime\":\"125.406\"}","timestamp":"2025-03-13T05:46:39.670Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"400\",\"responseTime\":\"98.622\"}","timestamp":"2025-03-13T05:46:42.075Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/case/67d0108d031bf4e92077d5cb/subcases/\",\"status\":\"304\",\"responseTime\":\"220.593\"}","timestamp":"2025-03-13T05:47:19.436Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"4890.683\"}","timestamp":"2025-03-13T05:48:07.829Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"responseTime\":\"5602.489\"}","timestamp":"2025-03-13T05:48:08.565Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"102.115\"}","timestamp":"2025-03-13T05:48:47.128Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"responseTime\":\"307.813\"}","timestamp":"2025-03-13T05:48:47.347Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"responseTime\":\"323.095\"}","timestamp":"2025-03-13T05:52:54.720Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"372.422\"}","timestamp":"2025-03-13T05:52:54.742Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:02:28.884Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"108.078\"}","timestamp":"2025-03-13T06:02:39.291Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"responseTime\":\"313.478\"}","timestamp":"2025-03-13T06:02:39.512Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:05:18.695Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"121.438\"}","timestamp":"2025-03-13T06:05:26.558Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"responseTime\":\"317.089\"}","timestamp":"2025-03-13T06:05:26.783Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"93.071\"}","timestamp":"2025-03-13T06:05:33.708Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"responseTime\":\"271.772\"}","timestamp":"2025-03-13T06:05:33.882Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:05:59.135Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:06:18.480Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:09:41.937Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"responseTime\":\"-\"}","timestamp":"2025-03-13T06:09:46.116Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"responseTime\":\"136\"}","timestamp":"2025-03-13T06:09:46.308Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:11:21.827Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"content_length\":\"-\",\"responseTime\":\"99.110\"}","timestamp":"2025-03-13T06:11:26.819Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"content_length\":\"136\",\"responseTime\":\"311.892\"}","timestamp":"2025-03-13T06:11:27.044Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:11:34.792Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"content_length\":\"-\",\"responseTime\":\"112.669\"}","timestamp":"2025-03-13T06:11:38.533Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"content_length\":\"7215\",\"responseTime\":\"348.049\"}","timestamp":"2025-03-13T06:11:38.741Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:14:25.548Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:14:34.381Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"content_length\":\"-\",\"responseTime\":\"101.673\"}","timestamp":"2025-03-13T06:14:37.074Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"500\",\"content_length\":\"136\",\"responseTime\":\"313.925\"}","timestamp":"2025-03-13T06:14:37.269Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:14:54.198Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"content_length\":\"-\",\"responseTime\":\"110.720\"}","timestamp":"2025-03-13T06:14:56.939Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"content_length\":\"7215\",\"responseTime\":\"299.008\"}","timestamp":"2025-03-13T06:14:57.149Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:20:37.759Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"200\",\"content_length\":\"379\",\"responseTime\":\"97.172\"}","timestamp":"2025-03-13T06:22:09.928Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"content_length\":\"7168\",\"responseTime\":\"311.124\"}","timestamp":"2025-03-13T06:22:10.157Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"200\",\"content_length\":\"380\",\"responseTime\":\"83.561\"}","timestamp":"2025-03-13T06:24:08.490Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"content_length\":\"7215\",\"responseTime\":\"264.126\"}","timestamp":"2025-03-13T06:24:08.678Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"41.058\"}","timestamp":"2025-03-13T06:33:22.624Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"44.995\"}","timestamp":"2025-03-13T06:33:39.233Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:39:07.267Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:39:25.280Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Something went wrong","timestamp":"2025-03-13T06:39:30.695Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"57.461\"}","timestamp":"2025-03-13T06:40:11.312Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"62.637\"}","timestamp":"2025-03-13T06:41:47.697Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"44.544\"}","timestamp":"2025-03-13T06:41:51.028Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"45.362\"}","timestamp":"2025-03-13T06:42:31.601Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"212.726\"}","timestamp":"2025-03-13T06:43:49.070Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"401\",\"content_length\":\"-\",\"responseTime\":\"1.410\"}","timestamp":"2025-03-13T06:43:57.900Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"42.092\"}","timestamp":"2025-03-13T06:44:29.625Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"41.290\"}","timestamp":"2025-03-13T06:44:34.218Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"43.265\"}","timestamp":"2025-03-13T06:50:21.244Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"49.069\"}","timestamp":"2025-03-13T06:50:39.779Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"46.395\"}","timestamp":"2025-03-13T06:51:26.917Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"44.738\"}","timestamp":"2025-03-13T06:53:02.028Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"42.930\"}","timestamp":"2025-03-13T06:57:31.271Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"55.517\"}","timestamp":"2025-03-13T06:57:41.794Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/register\",\"status\":\"403\",\"content_length\":\"84\",\"responseTime\":\"41.736\"}","timestamp":"2025-03-13T06:58:03.329Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"200\",\"content_length\":\"379\",\"responseTime\":\"128.633\"}","timestamp":"2025-03-13T06:58:49.379Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"content_length\":\"7168\",\"responseTime\":\"361.483\"}","timestamp":"2025-03-13T06:58:49.697Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/67c5425bf76ea7ba4f81e267\",\"status\":\"304\",\"content_length\":\"-\",\"responseTime\":\"87.067\"}","timestamp":"2025-03-13T06:58:54.789Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/cases?page=1&limit=5\",\"status\":\"200\",\"content_length\":\"7168\",\"responseTime\":\"284.095\"}","timestamp":"2025-03-13T06:58:55.094Z"}

@@ -5,6 +5,7 @@ import { sendPasswordSetupEmail } from "#utils/mailer.js";
 import { sendOTP, verifyOTP } from '#utils/otp.js';
 import Case from "#models/case.js";
 import mongoose from "mongoose";
+import { sendSuccess, sendError } from '#utils/responseHelper.js';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const registerUser = async ({
@@ -109,10 +110,11 @@ export const sendOTPToUser = async (email) => {
 export const verifyUserOTP = async (email, otp) => {
     try {
 
-        const user = await User.findOne({ email, isDeleted: false });
-        if (!user) {
-            throw new Error('User not found');
-        }
+            const user = await User.findOne({ email, isDeleted: false });
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
 
         const { phoneNumber, countryCode } = user;
 
@@ -120,37 +122,77 @@ export const verifyUserOTP = async (email, otp) => {
             throw new Error('User does not have a phone number');
         }
 
-        const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-        const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
-
-        if (verificationCheck.status !== 'approved') {
-            throw new Error('OTP verification failed');
+            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+            const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
+            
+            if (verificationCheck.status !== 'approved') {
+                throw new Error('OTP verification failed');
+            }
+            const payload = {
+                id: user._id,
+                role: user.userRole
+            };
+            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
+            // console.log("token" + token);
+            return token;
+        } catch (err) {
+            throw new Error(err.message);
         }
-        const payload = {
-            id: user._id,
-            role: user.role
-        };
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-        // console.log("token" + token);
-        return token;
-    } catch (err) {
-        throw new Error(err.message);
-    }
-};
+    };
 
-
-export const getAllUsers = async () => {
-    try {
-        return await User.find({ isDeleted: false }).select('-_id -password');
-    } catch (err) {
-        throw new Error(err.message);
-    }
-};
+    export const getAllUsers = async (page, limit, search, sortField, sortOrder) => {
+        try {
+            const searchQuery = search
+                ? {
+                    $or: [
+                        { firstName: { $regex: search, $options: "i" } },
+                        { lastName: { $regex: search, $options: "i" } },
+                        { email: { $regex: search, $options: "i" } },
+                        { phoneNumber: { $regex: search, $options: "i" } },
+                    ],
+                }
+                : {};
+    
+            // Map frontend field names to database field names
+            const fieldMapping = {
+                firstName: "firstName",
+                lastName: "lastName",
+                email: "email",
+                phoneNumber: "phoneNumber",
+                userRole: "userRole",
+                isDeleted: "isDeleted",
+            };
+    
+            const validSortField = fieldMapping[sortField] || "firstName"; // Default field
+            const validSortOrder = sortOrder === "desc" ? -1 : 1; // Fix issue with default sorting
+    
+            console.log(`Sorting by: ${validSortField}, Order: ${validSortOrder}`);
+    
+            // Fetch users with sorting, searching, and pagination
+            const users = await User.find(searchQuery)
+                .sort({ [validSortField]: validSortOrder }) // Fix sorting issue
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .select("-password");
+            console.log(users);
+            const totalUsers = await User.countDocuments(searchQuery);
+    
+            return { users, totalUsers };
+        } catch (err) {
+            throw new Error(err.message);
+        }
+    };
+    
+    
+    
+    
+    
+    
 
 
 export const getUserById = async (id) => {
     try {
-        const user = await User.findOne({ _id: id, isDeleted: false }).select('-_id -password');
+        const user = await User.findOne({ _id: id }).select(' -password');
         if (!user) {
             throw new Error('User not found');
         }
@@ -271,7 +313,9 @@ export const updateUser = async (id, userData) => {
     try {
 
         userData.updatedAt = new Date();
-        const updatedUser = await User.findOneAndUpdate({ _id: id, isDeleted: false }, { $set: userData }, { runValidators: true }).lean();
+        console.log(userData);
+        const updatedUser = await User.findOneAndUpdate({ _id: id }, { $set: userData }, { runValidators: true }).lean();
+        console.log(updatedUser);
         if (!updatedUser) {
             throw new Error("User not found");
         }

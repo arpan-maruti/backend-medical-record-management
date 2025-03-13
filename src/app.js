@@ -18,17 +18,14 @@ const morganFormat = ":method :url :status :res[content-length] :response-time m
 const app = express();
 
 
-const allowedOrigins = [
-    process.env.CORS_ORIGIN_1,  // Example: 'https://frontend-app.onrender.com'
-    process.env.CORS_ORIGIN_2   // Example: 'http://localhost:4200'
-];
 
-const corsOptions = {
-    origin: process.env.CORS_ORIGIN_2, // Your frontend URL
-    credentials: true, // Allow cookies to be sent
-};
+app.use(cors({
+    origin: true, // Allow all origins
+    credentials: true, // Allow cookies and authentication headers
+    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS', // Added PATCH
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+}));
 
-app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());

@@ -158,17 +158,29 @@ export const verifyOTPController = async (req, res) => {
 
 export const getUsers = async (req, res) => {
     try {
-        const users = await getAllUsers();
+        let { page = 1, limit = 5, search = "", sortField = "firstName", sortOrder = "asc" } = req.query;
+
+        // Ensure pagination values are valid numbers
+        page = Math.max(1, parseInt(page, 10) || 1);
+        limit = Math.max(1, parseInt(limit, 10) || 10);
+
+        // Fetch users with search, pagination, and sorting
+        const { users, totalUsers } = await getAllUsers(page, limit, search, sortField, sortOrder);
+
+        // Convert to snake_case if needed
         const updatedUsers = convertKeysToSnakeCase(users);
+
         return sendSuccess(res, 200, {
             code: "Success",
             message: "Users fetched successfully",
-            data: { users: updatedUsers, length: updatedUsers.length },
+            data: { users: updatedUsers, total: totalUsers },
         });
     } catch (err) {
         return sendError(res, 500, { code: "Error", message: err.message });
     }
 };
+
+
 
 export const getUserByIdController = async (req, res) => {
     try {

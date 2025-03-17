@@ -110,11 +110,11 @@ export const sendOTPToUser = async (email) => {
 export const verifyUserOTP = async (email, otp) => {
     try {
 
-            const user = await User.findOne({ email, isDeleted: false });
-            
-            if (!user) {
-                throw new Error('User not found');
-            }
+        const user = await User.findOne({ email, isDeleted: false });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
 
         const { phoneNumber, countryCode } = user;
 
@@ -122,72 +122,72 @@ export const verifyUserOTP = async (email, otp) => {
             throw new Error('User does not have a phone number');
         }
 
-            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-            const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
-            
-            if (verificationCheck.status !== 'approved') {
-                throw new Error('OTP verification failed');
-            }
-            const payload = {
-                id: user._id,
-                role: user.userRole
-            };
-            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
-            // console.log("token" + token);
-            return token;
-        } catch (err) {
-            throw new Error(err.message);
-        }
-    };
+        const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+        const verificationCheck = await verifyOTP(fullPhoneNumber, otp);
 
-    export const getAllUsers = async (page, limit, search, sortField, sortOrder) => {
-        try {
-            const searchQuery = search
-                ? {
-                    $or: [
-                        { firstName: { $regex: search, $options: "i" } },
-                        { lastName: { $regex: search, $options: "i" } },
-                        { email: { $regex: search, $options: "i" } },
-                        { phoneNumber: { $regex: search, $options: "i" } },
-                    ],
-                }
-                : {};
-    
-            // Map frontend field names to database field names
-            const fieldMapping = {
-                firstName: "firstName",
-                lastName: "lastName",
-                email: "email",
-                phoneNumber: "phoneNumber",
-                userRole: "userRole",
-                isDeleted: "isDeleted",
-            };
-    
-            const validSortField = fieldMapping[sortField] || "firstName"; // Default field
-            const validSortOrder = sortOrder === "desc" ? -1 : 1; // Fix issue with default sorting
-    
-            console.log(`Sorting by: ${validSortField}, Order: ${validSortOrder}`);
-    
-            // Fetch users with sorting, searching, and pagination
-            const users = await User.find(searchQuery)
-                .sort({ [validSortField]: validSortOrder }) // Fix sorting issue
-                .skip((page - 1) * limit)
-                .limit(limit)
-                .select("-password");
-            console.log(users);
-            const totalUsers = await User.countDocuments(searchQuery);
-    
-            return { users, totalUsers };
-        } catch (err) {
-            throw new Error(err.message);
+        if (verificationCheck.status !== 'approved') {
+            throw new Error('OTP verification failed');
         }
-    };
-    
-    
-    
-    
-    
-    
+        const payload = {
+            id: user._id,
+            role: user.userRole
+        };
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '10h' });
+        // console.log("token" + token);
+        return token;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
+export const getAllUsers = async (page, limit, search, sortField, sortOrder) => {
+    try {
+        const searchQuery = search
+            ? {
+                $or: [
+                    { firstName: { $regex: search, $options: "i" } },
+                    { lastName: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } },
+                    { phoneNumber: { $regex: search, $options: "i" } },
+                ],
+            }
+            : {};
+
+        // Map frontend field names to database field names
+        const fieldMapping = {
+            firstName: "firstName",
+            lastName: "lastName",
+            email: "email",
+            phoneNumber: "phoneNumber",
+            userRole: "userRole",
+            isDeleted: "isDeleted",
+        };
+
+        const validSortField = fieldMapping[sortField] || "firstName"; // Default field
+        const validSortOrder = sortOrder === "desc" ? -1 : 1; // Fix issue with default sorting
+
+        console.log(`Sorting by: ${validSortField}, Order: ${validSortOrder}`);
+
+        // Fetch users with sorting, searching, and pagination
+        const users = await User.find(searchQuery)
+            .sort({ [validSortField]: validSortOrder }) // Fix sorting issue
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .select("-password");
+        console.log(users);
+        const totalUsers = await User.countDocuments(searchQuery);
+
+        return { users, totalUsers };
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
+
+
+
+
+
 
 
 export const getUserById = async (id) => {
@@ -207,7 +207,7 @@ export const fetchCasesofUserService = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader) throw new Error("Authorization header missing");
-        
+
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, JWT_SECRET);
         const id = decoded?.id;
@@ -229,39 +229,39 @@ export const fetchCasesofUserService = async (req, res) => {
             searchCriteria.refNumber = { $regex: req.query.ref_number, $options: 'i' };
         }
 
-        const page = parseInt(req.query.page) || 1;
+        let page = parseInt(req.query.page) || 1;
+        // if(req.query.limit) page = 1;    
         const limit = parseInt(req.query.limit) || 5;
         let sortBy = req.query?.sort || "-createdAt";
         const skip = (page - 1) * limit;
 
-
         const [totalCases, cases] = await Promise.all([
             Case.countDocuments(searchCriteria),
             Case.find(searchCriteria)
-            .sort(sortBy)
-            .collation({ locale: "en", strength: 2 })
-            .limit(limit)
-            .skip(skip)
-            .populate({
-                path: 'parameters',
-                populate: {
-                    path: 'instructionId',
-                    select: 'instructionMsg loiId',
+                .sort(sortBy)
+                .collation({ locale: "en", strength: 2 })
+                .limit(limit)
+                .skip(skip)
+                .populate({
+                    path: 'parameters',
                     populate: {
-                        path: 'loiId',
-                        select: 'loiMsg'
+                        path: 'instructionId',
+                        select: 'instructionMsg loiId',
+                        populate: {
+                            path: 'loiId',
+                            select: 'loiMsg'
+                        }
                     }
-                }
-            })
-            .populate("modifiedBy", "firstName lastName")
-            .populate({
-                path: 'files',
-                select: '_id fileStatus fileType'
-            })
-            .lean()
+                })
+                .populate("modifiedBy", "firstName lastName")
+                .populate({
+                    path: 'files',
+                    select: '_id fileStatus fileType'
+                })
+                .lean()
         ]);
 
-        
+
         if (!totalCases) {
             return { cases: [], pagination: { totalItems: 0, totalPages: 0, currentPage: page, itemsPerPage: limit } };
         }
@@ -283,7 +283,7 @@ export const fetchCasesofUserService = async (req, res) => {
                 'uploaded'
             ];
 
-            const newCaseStatus = statusPriority.find(status => 
+            const newCaseStatus = statusPriority.find(status =>
                 fileStatus.includes(status)
             ) || 'uploaded';
 
@@ -298,12 +298,14 @@ export const fetchCasesofUserService = async (req, res) => {
         if (bulkOps.length > 0) {
             await Case.bulkWrite(bulkOps);
         }
-        return { cases, pagination : {
-            totalItems: totalCases,
-            totalPages: Math.ceil(totalCases / limit),
-            currentPage: page,
-            itemsPerPage: limit,
-        } };
+        return {
+            cases, pagination: {
+                totalItems: totalCases,
+                totalPages: Math.ceil(totalCases / limit),
+                currentPage: page,
+                itemsPerPage: limit,
+            }
+        };
     } catch (err) {
         throw new Error(err.message);
     }

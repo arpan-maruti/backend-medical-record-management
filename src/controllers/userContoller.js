@@ -46,6 +46,8 @@ const verifyOtpSchema = Joi.object({
 });
 
 export const register = async (req, res) => {
+    // console.log("Register user:");
+    // console.log("Request",req);
     const { error } = registerSchema.validate(req.body);
     if (error) {
         return sendError(res, 400, { code: "Validation Error", message: error.details[0].message });

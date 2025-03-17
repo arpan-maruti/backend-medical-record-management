@@ -11,7 +11,10 @@ import InstructionTypeRoutes from '#routes/instructionTypeRoutes.js';
 import ParameterRoutes from '#routes/parameterRoutes.js';
 import CaseRoutes from '#routes/caseRoutes.js';
 import FileRoutes from '#routes/fileRoutes.js';
+import logger from "./utils/logger.js";
+import morgan from "morgan";
 
+const morganFormat = ":method :url :status :res[content-length] :response-time ms";
 const app = express();
 
 
@@ -28,6 +31,22 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static('public'));
 app.use(passport.initialize());
+app.use(
+    morgan(morganFormat, {
+      stream: {
+        write: (message) => {
+          const logObject = {
+            method: message.split(" ")[0],
+            url: message.split(" ")[1],
+            status: message.split(" ")[2],
+            content_length: message.split(" ")[3],
+            responseTime: message.split(" ")[4],
+          };
+          logger.info(JSON.stringify(logObject));
+        },
+      },
+    })
+  );
 
 app.use('/user', UserRoutes);
 app.use('/case', CaseRoutes);

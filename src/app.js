@@ -13,6 +13,7 @@ import CaseRoutes from '#routes/caseRoutes.js';
 import FileRoutes from '#routes/fileRoutes.js';
 import logger from "./utils/logger.js";
 import morgan from "morgan";
+import statusMonitor from 'express-status-monitor';
 
 const morganFormat = ":method :url :status :res[content-length] :response-time ms";
 const app = express();
@@ -32,7 +33,7 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(passport.initialize());
 app.use(
-    morgan(morganFormat, {
+  morgan(morganFormat, {
       stream: {
         write: (message) => {
           const logObject = {
@@ -47,6 +48,7 @@ app.use(
       },
     })
   );
+app.use(statusMonitor());
 
 app.use('/user', UserRoutes);
 app.use('/case', CaseRoutes);
@@ -54,7 +56,7 @@ app.use("/parameters", ParameterRoutes);
 app.use('/file', FileRoutes);
 app.use("/instruction-types", InstructionTypeRoutes);
 app.use('/loiType', LoiTypeRoutes);
-
+app.use('/status', statusMonitor());
 // Handle 404 errors
 app.all("*", (req, res, next) => {
     res.status(404).json({

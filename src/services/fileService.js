@@ -13,6 +13,7 @@ export const createFile = async (req) => {
       modifiedBy,
       fileName,
       filePath,
+      fileSize
     } = req.body;
 
     const newFile = new File({
@@ -23,6 +24,7 @@ export const createFile = async (req) => {
       filesLabel,
       createdBy,
       modifiedBy,
+      fileSize
     });
 
     await newFile.save({ runValidators: true });

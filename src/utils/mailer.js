@@ -69,15 +69,15 @@ export const sendEmail = async (to, subject, htmlContent) => {
   }
 };
 // Test the function with an async wrapper
-export const sendPasswordSetupEmail = async (email, token) => {
-  const link = `http://localhost:4200/set-password?token=${token}`;
-  const recipientEmail = email;
-  const subject = "Set Your Password";
-  const htmlContent = `<p>Click the link below to set your password:</p>
-           <a href="${link}">Set Password</a>
-            <p>This link will expire in 30 minutes.</p>`;
+  export const sendPasswordSetupEmail = async (email, token) => {
+    const link = `${process.env.CORS_ORIGIN_3}/set-password?token=${token}`;
+    const recipientEmail = email;
+    const subject = "Set Your Password";
+    const htmlContent = `<p>Click the link below to set your password:</p>
+            <a href="${link}">Set Password</a>
+              <p>This link will expire in 30 minutes.</p>`;
 
-  await sendEmail(recipientEmail, subject, htmlContent);
-};
+    await sendEmail(recipientEmail, subject, htmlContent);
+  };
 
 

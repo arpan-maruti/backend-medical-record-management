@@ -146,8 +146,10 @@ export const verifyOTPController = async (req, res) => {
         const token = await verifyUserOTP(email, otp);
         res.cookie('jwt', token, {
             httpOnly: false,
-            secure: false,
-            sameSite: 'strict',
+            secure: true,
+            sameSite: 'none',
+            domain: process.env.CORS_ORIGIN_1, // Replace with your domain
+            path: '/',
         });
         return sendSuccess(res, 200, { 
             message: "OTP verification successful.",

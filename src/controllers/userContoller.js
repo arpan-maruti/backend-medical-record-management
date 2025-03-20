@@ -144,10 +144,11 @@ export const verifyOTPController = async (req, res) => {
 
     try {
         const token = await verifyUserOTP(email, otp);
+        console.log(token);
         res.cookie('jwt', token, {
-            httpOnly: false,
-            secure: false,
-            sameSite: 'strict',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
         });
         return sendSuccess(res, 200, { 
             message: "OTP verification successful.",

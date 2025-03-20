@@ -142,6 +142,7 @@ export const verifyOTPController = async (req, res) => {
 
     const { email, otp } = req.body;
 
+    
     try {
         const token = await verifyUserOTP(email, otp);
         console.log(token);

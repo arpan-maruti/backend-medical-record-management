@@ -147,7 +147,7 @@ export const verifyOTPController = async (req, res) => {
         const token = await verifyUserOTP(email, otp);
         console.log(token);
         res.cookie('jwt', token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: true,
             sameSite: 'None',
             domain: '.netlify.app'

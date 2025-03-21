@@ -150,7 +150,8 @@ export const verifyOTPController = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'None',
-            domain: 'medical-record-management.netlify.app'
+            domain: 'medical-record-management.netlify.app',
+            path: '/'
         });
         return sendSuccess(res, 200, { 
             message: "OTP verification successful.",

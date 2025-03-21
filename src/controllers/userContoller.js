@@ -147,10 +147,10 @@ export const verifyOTPController = async (req, res) => {
         const token = await verifyUserOTP(email, otp);
         console.log(token);
         res.cookie('jwt', token, {
-            httpOnly: false,
+            httpOnly: true,
             secure: true,
             sameSite: 'None',
-            domain: '.netlify.app'
+            domain: 'medical-record-management.netlify.app'
         });
         return sendSuccess(res, 200, { 
             message: "OTP verification successful.",
